@@ -1,12 +1,15 @@
 package hdu.homework.chat.modules.user.controller;
 
-import hdu.homework.chat.entity.bean.Msg;
+import hdu.homework.chat.entity.bean.response.JsonWebTokenResponse;
+import hdu.homework.chat.entity.bean.response.Msg;
 import hdu.homework.chat.utils.ResultUtil;
 import hdu.homework.chat.entity.bean.request.UserPost;
 import hdu.homework.chat.modules.user.service.AuthenticationService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -25,7 +28,10 @@ public class UserController {
             return ResultUtil.result(HttpStatus.FORBIDDEN, 1001,  "yonghuminghuomimachucuo");
         } else {
             service.logUser(user.getUsername());
-            return ResultUtil.success();
+            return ResultUtil.success(JsonWebTokenResponse.builder()
+                                        .token(loginSuccess)
+                                        .expire(service.getExpire())
+            );
         }
     }
 

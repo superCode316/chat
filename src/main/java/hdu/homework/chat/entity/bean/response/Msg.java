@@ -1,4 +1,4 @@
-package hdu.homework.chat.entity.bean;
+package hdu.homework.chat.entity.bean.response;
 
 import lombok.Data;
 

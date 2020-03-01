@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -17,7 +18,12 @@ public class WebSecurityConfigAdapter extends WebSecurityConfigurerAdapter {
     public WebSecurityConfigAdapter(JwtAuthenticationFilter filter) {
         this.filter = filter;
     }
-
+    @Override
+    public void configure(WebSecurity web) {
+        web.ignoring()
+                .antMatchers("/user/login")
+                .antMatchers("/user/register");
+    }
     @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {

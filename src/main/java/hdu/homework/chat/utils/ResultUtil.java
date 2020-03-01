@@ -1,6 +1,6 @@
 package hdu.homework.chat.utils;
 
-import hdu.homework.chat.entity.bean.Msg;
+import hdu.homework.chat.entity.bean.response.Msg;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

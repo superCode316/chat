@@ -58,6 +58,10 @@ public class AuthenticationService{
         return jsonTokenUtil.generateToken(details);
     }
 
+    public int getExpire() {
+        return jsonTokenUtil.getExpiration();
+    }
+
     private boolean validate(User user, String password) {
         return user.getPassword().equals(password);
     }

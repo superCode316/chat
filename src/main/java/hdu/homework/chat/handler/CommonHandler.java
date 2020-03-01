@@ -1,6 +1,6 @@
 package hdu.homework.chat.handler;
 
-import hdu.homework.chat.entity.bean.Msg;
+import hdu.homework.chat.entity.bean.response.Msg;
 import hdu.homework.chat.utils.ResultUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

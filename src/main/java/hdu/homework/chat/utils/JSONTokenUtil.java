@@ -3,6 +3,7 @@ package hdu.homework.chat.utils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.JwtMap;
 import lombok.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +12,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 
 @Data
@@ -21,19 +24,22 @@ public class JSONTokenUtil implements Serializable {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
     private String secret;
     private String header;
-    private Long expire;
+    private Integer expiration;
 
     public String generateToken(UserDetails userDetails) {
         return generateToken(userDetails.getUsername(), new Date());
     }
 
     private String generateToken(String username, Date date) {
-        Date expireDate = new Date(System.currentTimeMillis() + expire);
-        Map<String, Object> map = Map.of("sub", username, "created", date);
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MILLISECOND, expiration);
+        JwtMap map = new JwtMap();
+        map.put("sub", username);
+        map.put("created", date);
         return Jwts.builder()
                 .setClaims(map)
-                .setExpiration(expireDate)
-                .signWith(SignatureAlgorithm.ES256, secret)
+                .setExpiration(calendar.getTime())
+                .signWith(SignatureAlgorithm.HS512, secret)
                 .compact();
     }
 
