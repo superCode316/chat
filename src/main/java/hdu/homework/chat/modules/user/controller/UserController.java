@@ -20,8 +20,8 @@ public class UserController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     public ResponseEntity<Msg<?>> postLogin(@RequestBody UserPost user) {
-        boolean loginSuccess = service.validUser(user.getUsername(), user.getPassword());
-        if (!loginSuccess){
+        String loginSuccess = service.login(user.getUsername(), user.getPassword());
+        if (loginSuccess==null){
             return ResultUtil.result(HttpStatus.FORBIDDEN, 1001,  "yonghuminghuomimachucuo");
         } else {
             service.logUser(user.getUsername());
