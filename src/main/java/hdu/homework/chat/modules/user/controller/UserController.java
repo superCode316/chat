@@ -24,6 +24,7 @@ public class UserController {
         if (!loginSuccess){
             return ResultUtil.result(HttpStatus.FORBIDDEN, 1001,  "yonghuminghuomimachucuo");
         } else {
+            service.logUser(user.getUsername());
             return ResultUtil.success();
         }
     }

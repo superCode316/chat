@@ -12,6 +12,7 @@ public class UserModel {
     private final String selectWherePhoneQuery = "select * from user where u_phone = ?";
     private final String countQuery = "select count(*) from user where u_phone = ?";
     private final String insertQuery = "insert into user(u_phone, u_pwd, creaTime) value (?,?,?)";
+    private final String getUidQuery = "select u_id from user where u_phone = ?";
 
     @Autowired
     public UserModel(JdbcTemplate template) {
@@ -20,6 +21,10 @@ public class UserModel {
 
     public User getUserByPhone(String phone) {
         return template.queryForObject(selectWherePhoneQuery, new UserMapper(), phone);
+    }
+
+    public Integer getUidByPhone(String phone) {
+        return template.queryForObject(getUidQuery, Integer.class, phone);
     }
 
     public Long getUserCount(String username) {

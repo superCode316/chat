@@ -2,6 +2,7 @@ package hdu.homework.chat.modules.user.service;
 
 import hdu.homework.chat.entity.bean.User;
 import hdu.homework.chat.entity.bean.request.UserPost;
+import hdu.homework.chat.modules.user.model.RegisterModel;
 import hdu.homework.chat.modules.user.model.UserModel;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -14,12 +15,14 @@ import java.util.List;
 public class AuthenticationService {
 
     private final UserModel User;
+    private final RegisterModel registerModel;
     private List<Character> symbols = List.of('.',',','!','@','#','$','%','+','-','*','/');
     private SimpleDateFormat format;
     private final String dateFormat = "yyyy-MM-dd HH:mm:ss";
 
-    public AuthenticationService(UserModel User) {
+    public AuthenticationService(UserModel User, RegisterModel registerModel) {
         this.User = User;
+        this.registerModel = registerModel;
         this.format = new SimpleDateFormat(dateFormat);
     }
 
@@ -34,6 +37,11 @@ public class AuthenticationService {
         } catch (EmptyResultDataAccessException | NullPointerException e) {
             return false;
         }
+    }
+
+    public void logUser(String username) {
+        Integer uid = User.getUidByPhone(username);
+        registerModel.insertRecord(uid, format.format(new Date()), format.format(new Date()));
     }
 
     public String checkRegister(UserPost user) {
