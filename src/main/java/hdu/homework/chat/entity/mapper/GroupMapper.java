@@ -1,14 +1,14 @@
 package hdu.homework.chat.entity.mapper;
 
-import hdu.homework.chat.entity.bean.User;
+import hdu.homework.chat.entity.bean.Group;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class UserMapper extends AbstractMapper<User> {
+public class GroupMapper extends AbstractMapper<Group> {
     @Override
-    public Class<User> getClazz() {
-        return User.class;
+    public Class<Group> getClazz() {
+        return Group.class;
     }
 }
