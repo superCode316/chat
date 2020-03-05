@@ -29,4 +29,5 @@ public class ResultUtil {
     public static ResponseEntity<Msg<?>> success() {
         return success(null);
     }
+    public static ResponseEntity<Msg<?>> forbidden() {return error(HttpStatus.FORBIDDEN);}
 }
