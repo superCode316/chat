@@ -3,12 +3,20 @@ package hdu.homework.chat.modules.user.controller;
 import hdu.homework.chat.entity.bean.response.Friend;
 import hdu.homework.chat.entity.bean.response.JsonWebTokenResponse;
 import hdu.homework.chat.entity.bean.response.Msg;
+import hdu.homework.chat.entity.bean.response.swagger.Forbidden;
+import hdu.homework.chat.entity.bean.response.swagger.FriendResponse;
+import hdu.homework.chat.entity.bean.response.swagger.LoginResponse;
+import hdu.homework.chat.entity.bean.response.swagger.SuccessResponse;
 import hdu.homework.chat.modules.groups.service.GroupService;
 import hdu.homework.chat.modules.user.service.UserDetailsServiceImpl;
 import hdu.homework.chat.modules.user.service.UserService;
 import hdu.homework.chat.utils.ResultUtil;
 import hdu.homework.chat.entity.bean.request.UserPost;
 import hdu.homework.chat.modules.user.service.AuthenticationService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +27,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
+@Api(tags = "用户相关接口")
 public class UserController {
 
     private final AuthenticationService service;
@@ -32,11 +41,17 @@ public class UserController {
         this.groupService = groupService;
     }
 
+    @ApiOperation(httpMethod = "POST", value = "用户登录接口", notes = "用户登录的返回数据。返回数据中的token需要保存，失效时间在数据中。在除了注册和登录请求意外的请求中，需要将token放在请求头中，格式为 x-access-token:TOKEN")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @ApiResponses({
+            @ApiResponse(code = 200, response = LoginResponse.class, message = "请求成功"),
+            @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
+            @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
+    })
     public ResponseEntity<Msg<?>> postLogin(@RequestBody UserPost user) {
         String loginSuccess = service.login(user.getUsername(), user.getPassword());
         if (loginSuccess==null){
-            return ResultUtil.result(HttpStatus.FORBIDDEN, 1001,  "yonghuminghuomimachucuo");
+            return ResultUtil.result(HttpStatus.FORBIDDEN, 1001,  "用户名或密码出错");
         } else {
             service.logUser(user.getUsername());
             Object token = JsonWebTokenResponse.builder()
@@ -47,6 +62,12 @@ public class UserController {
         }
     }
 
+    @ApiOperation(httpMethod = "POST", value = "用户注册接口")
+    @ApiResponses({
+            @ApiResponse(code = 200, response = SuccessResponse.class, message = "请求成功"),
+            @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
+            @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
+    })
     @RequestMapping(value = "/register", method = RequestMethod.POST)
     public ResponseEntity<Msg<?>> postRegister(@RequestBody UserPost user) {
 
@@ -60,6 +81,12 @@ public class UserController {
         return ResultUtil.success();
     }
 
+    @ApiOperation(httpMethod = "POST", value = "添加好友接口")
+    @ApiResponses({
+            @ApiResponse(code = 200, response = SuccessResponse.class, message = "请求成功"),
+            @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
+            @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
+    })
     @RequestMapping(value = "/add-friend", method = RequestMethod.POST)
     public ResponseEntity<Msg<?>> addFriend(@RequestBody UserPost user) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -69,6 +96,12 @@ public class UserController {
         return ResultUtil.success();
     }
 
+    @ApiOperation(httpMethod = "GET", value = "查找好友接口")
+    @ApiResponses({
+            @ApiResponse(code = 200, response = FriendResponse.class, message = "请求成功"),
+            @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
+            @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
+    })
     @RequestMapping("/friends")
     public ResponseEntity<Msg<?>> getFriends() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

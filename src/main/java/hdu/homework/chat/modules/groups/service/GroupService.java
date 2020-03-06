@@ -7,6 +7,8 @@ import hdu.homework.chat.modules.user.service.UserDetailsServiceImpl;
 import hdu.homework.chat.utils.DateUtils;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class GroupService {
     private GroupModel groupModel;
@@ -35,5 +37,9 @@ public class GroupService {
 
     public void joinGroup(Integer gid, String username) {
         guModel.join(gid, userModel.getUidByUsername(username), DateUtils.getNowDateString());
+    }
+
+    public List<Group> getGroupsByUserName(String username) {
+        return groupModel.getGroupsByUserName(username);
     }
 }

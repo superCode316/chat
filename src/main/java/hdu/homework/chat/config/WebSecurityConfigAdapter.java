@@ -21,11 +21,14 @@ public class WebSecurityConfigAdapter extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) {
         web.ignoring()
-                .antMatchers("/user/add-friend")
-                .antMatchers("/user/login")
-                .antMatchers("/user/register")
-                .antMatchers("/message/**")
-                .antMatchers("/group/**");
+//                .antMatchers("/user/add-friend")
+//                .antMatchers("/v2/**")
+//                .antMatchers("/swagger.html")
+//                .antMatchers("/user/login")
+//                .antMatchers("/user/register")
+//                .antMatchers("/message/**")
+//                .antMatchers("/group/**");
+        .antMatchers("/**");
     }
     @Bean
     @Override
