@@ -96,7 +96,6 @@
             </exclusions>
         </dependency>
         <dependency>
-<<<<<<< HEAD
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
             <version>2.9.2</version>
@@ -106,13 +105,11 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>2.9.2</version>
         </dependency>
-=======
+        <dependency>
             <groupId>com.zaxxer</groupId>
             <artifactId>HikariCP</artifactId>
             <version>3.4.2</version>
         </dependency>
-
->>>>>>> caa431604f4ff06782acad6ac70405a6ecd9580b
     </dependencies>
 
     <build>
