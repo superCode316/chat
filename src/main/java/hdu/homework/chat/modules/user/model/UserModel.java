@@ -9,10 +9,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class UserModel {
     private JdbcTemplate template;
-    private final String selectWherePhoneQuery = "select * from user where u_phone = ?";
-    private final String countQuery = "select count(*) from user where u_phone = ?";
-    private final String insertQuery = "insert into user(u_phone, u_pwd, creaTime) value (?,?,?)";
-    private final String getUidQuery = "select u_id from user where u_phone = ?";
+    private final String selectWherePhoneQuery = "select * from user where account = ?";
+    private final String countQuery = "select count(*) from user where account = ?";
+    private final String insertQuery = "insert into user(account, pwd, creaTime) value (?,?,?)";
+    private final String getUidQuery = "select u_id from user where account = ?";
 
     @Autowired
     public UserModel(JdbcTemplate template) {

@@ -1,11 +1,15 @@
 package hdu.homework.chat.entity.bean.response;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
+@ApiModel()
 public class Msg<T> {
     private int code;
     private String msg;
+    @ApiModelProperty(name = "返回数据")
     private T data;
 
     public Msg(Integer code) {

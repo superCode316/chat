@@ -1,11 +1,9 @@
 package hdu.homework.chat.entity.factory;
 
 import hdu.homework.chat.entity.bean.Message;
+import hdu.homework.chat.modules.user.model.UserModel;
 import hdu.homework.chat.utils.DateUtils;
-
-import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import org.springframework.stereotype.Component;
 
 public class MessageFactory {
     private static final int PEOPLE = 0;
@@ -19,7 +17,7 @@ public class MessageFactory {
             message.setSenderIDl(sid);
             return this;
         }
-        public MessageBuilder to(Integer tid, int type) {
+        public MessageBuilder to(int tid, int type) {
             if (type == PEOPLE) {
                 message.setRecieverID(tid);
             } else {
