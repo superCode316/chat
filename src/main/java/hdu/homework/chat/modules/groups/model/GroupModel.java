@@ -9,6 +9,9 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */
 @Repository
 public class GroupModel {
     private final String getGroup = "select * from groupInfo where g_id = ?";

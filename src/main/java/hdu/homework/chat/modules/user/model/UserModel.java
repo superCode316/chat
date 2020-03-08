@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */
 @Repository
 public class UserModel {
     private JdbcTemplate template;

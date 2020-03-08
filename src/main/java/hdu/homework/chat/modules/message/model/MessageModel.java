@@ -7,6 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */
 @Repository
 public class MessageModel {
     private JdbcTemplate template;

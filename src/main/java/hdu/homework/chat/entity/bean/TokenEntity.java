@@ -5,6 +5,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.Setter;
 
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */
 @Data
 @ApiModel
 public class TokenEntity {

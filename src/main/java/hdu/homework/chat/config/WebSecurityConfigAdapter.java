@@ -1,5 +1,6 @@
 package hdu.homework.chat.config;
 
+import hdu.homework.chat.utils.BeatsFilter;
 import hdu.homework.chat.utils.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,18 +10,19 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfiguration;
-import org.springframework.web.cors.CorsConfigurationSource;
-import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */
 @Configuration
 public class WebSecurityConfigAdapter extends WebSecurityConfigurerAdapter {
 
     private JwtAuthenticationFilter filter;
+    private BeatsFilter beatsFilter;
 
-    public WebSecurityConfigAdapter(JwtAuthenticationFilter filter) {
+    public WebSecurityConfigAdapter(JwtAuthenticationFilter filter, BeatsFilter beatsFilter) {
         this.filter = filter;
+        this.beatsFilter = beatsFilter;
     }
     @Override
     public void configure(WebSecurity web) {
@@ -46,9 +48,11 @@ public class WebSecurityConfigAdapter extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(getFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(beatsFilter, JwtAuthenticationFilter.class);
         super.configure(http);
     }
+
 
     @Bean
     public CorsFilter getFilter() {

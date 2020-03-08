@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */@Repository
 public class FriendModel {
     private final String add = "insert into friends(userID, friendID, addTime) value (?,?,?)";
     private final String getFriend = "(select friendID as fid, account as name from friends left join `user` on `user`.u_id = userID where userID = ?) union\n" +

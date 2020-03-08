@@ -17,6 +17,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -25,6 +26,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */
 @RestController
 @RequestMapping("/user")
 @Api(tags = "用户相关接口")
@@ -34,11 +38,13 @@ public class UserController {
     private UserService userService;
     private UserDetailsServiceImpl userDetailsService;
     private GroupService groupService;
-    public UserController(AuthenticationService service, UserService userService, UserDetailsServiceImpl userDetailsService, GroupService groupService) {
+    private RedisTemplate<String, String> redis;
+    public UserController(AuthenticationService service, UserService userService, UserDetailsServiceImpl userDetailsService, GroupService groupService, RedisTemplate<String, String> redis) {
         this.service = service;
         this.userService = userService;
         this.userDetailsService = userDetailsService;
         this.groupService = groupService;
+        this.redis = redis;
     }
 
     @ApiOperation(httpMethod = "POST", value = "用户登录接口", notes = "用户登录的返回数据。返回数据中的token需要保存，失效时间在数据中。在除了注册和登录请求意外的请求中，需要将token放在请求头中，格式为 x-access-token:TOKEN")

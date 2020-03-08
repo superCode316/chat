@@ -3,6 +3,9 @@ package hdu.homework.chat.modules.groups.model;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */
 @Repository
 public class GroupUserModel {
     private JdbcTemplate template;

@@ -4,6 +4,9 @@ import hdu.homework.chat.entity.bean.response.Msg;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */
 public class ResultUtil {
     public static ResponseEntity<Msg<?>> result(Integer status, Integer code, String msg) {
         return ResponseEntity.status(status).body(new Msg<String>(code, msg));

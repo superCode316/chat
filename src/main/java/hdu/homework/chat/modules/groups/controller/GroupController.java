@@ -22,6 +22,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */
 @RestController
 @RequestMapping("group")
 @Api(tags = "群组相关接口")

@@ -6,6 +6,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */
 @Getter
 @Setter
 @ApiModel("用户实体")

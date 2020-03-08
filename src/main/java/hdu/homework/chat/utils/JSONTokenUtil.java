@@ -17,6 +17,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */
 @Data
 @ConfigurationProperties(prefix = "jwt")
 @Component

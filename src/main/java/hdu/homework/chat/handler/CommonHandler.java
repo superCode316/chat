@@ -13,6 +13,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.SQLSyntaxErrorException;
 
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */
 @ControllerAdvice
 public class CommonHandler {
     Logger logger = LoggerFactory.getLogger(this.getClass());

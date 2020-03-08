@@ -21,7 +21,6 @@ import java.time.Duration;
 /**
  * @author: 钱曹宇
  * @date: 2020/3/3 9:05 上午
- * @description:
  */
 @Configuration
 @EnableCaching

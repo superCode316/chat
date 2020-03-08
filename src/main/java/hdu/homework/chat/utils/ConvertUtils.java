@@ -3,6 +3,9 @@ package hdu.homework.chat.utils;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+/**
+ * created by 钱曹宇@supercode on 3/8/2020
+ */
 public class ConvertUtils {
     public static boolean convert(Object dest, Object src, Class<?> destClazz, Class<?> srcClazz ) {
         try {
