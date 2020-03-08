@@ -73,9 +73,9 @@ public class AuthenticationService{
 
     public String checkRegister(UserPost user) {
         if (checkUserExist(user.getUsername()))
-            return "yijingyouzhegeyonghumingle";
-        if (checkPasswordComplexity(user.getPassword())) {
-            return "yonghumimataijiandan";
+            return "已经有这个用户名了";
+        if (!checkPasswordComplexity(user.getPassword())) {
+            return "用户名或密码太简单";
         }
         return null;
     }
