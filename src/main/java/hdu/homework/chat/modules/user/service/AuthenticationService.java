@@ -1,21 +1,14 @@
 package hdu.homework.chat.modules.user.service;
 
-import hdu.homework.chat.entity.bean.User;
+import hdu.homework.chat.entity.bean.database.User;
 import hdu.homework.chat.entity.bean.request.UserPost;
-import hdu.homework.chat.modules.user.model.RegisterModel;
 import hdu.homework.chat.modules.user.model.UserModel;
 import hdu.homework.chat.utils.JSONTokenUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -29,23 +22,23 @@ import java.util.List;
 public class AuthenticationService{
 
     private final UserModel User;
-    private final RegisterModel registerModel;
     private final UserDetailsService userDetailsService;
     private final JSONTokenUtil jsonTokenUtil;
+    private final RedisTemplate<String, Object> redis;
 
     private List<Character> symbols = List.of('.',',','!','@','#','$','%','+','-','*','/');
     private SimpleDateFormat format;
     private final String dateFormat = "yyyy-MM-dd HH:mm:ss";
 
-    public AuthenticationService(UserModel User, RegisterModel registerModel, @Qualifier("userdetails") UserDetailsService userDetailsService, JSONTokenUtil jsonTokenUtil) {
+    public AuthenticationService(UserModel User, @Qualifier("userdetails") UserDetailsService userDetailsService, JSONTokenUtil jsonTokenUtil, RedisTemplate<String, Object> redis) {
         this.User = User;
-        this.registerModel = registerModel;
         this.userDetailsService = userDetailsService;
         this.jsonTokenUtil = jsonTokenUtil;
+        this.redis = redis;
         this.format = new SimpleDateFormat(dateFormat);
     }
 
-    public hdu.homework.chat.entity.bean.User getUserByPhone(String phone) {
+    public hdu.homework.chat.entity.bean.database.User getUserByPhone(String phone) {
         return User.getUserByPhone(phone);
     }
 
@@ -57,8 +50,13 @@ public class AuthenticationService{
         } catch (EmptyResultDataAccessException | NullPointerException e) {
             return null;
         }
+        addToRedis(username);
         UserDetails details = userDetailsService.loadUserByUsername(username);
         return jsonTokenUtil.generateToken(details);
+    }
+
+    private void addToRedis(String username) {
+        redis.opsForValue().set(username, true, 1800L);
     }
 
     public int getExpire() {
@@ -67,11 +65,6 @@ public class AuthenticationService{
 
     private boolean validate(User user, String password) {
         return user.getPassword().equals(password);
-    }
-
-    public void logUser(String username) {
-        Integer uid = User.getUidByPhone(username);
-        registerModel.insertRecord(uid, format.format(new Date()), format.format(new Date()));
     }
 
     public String checkRegister(UserPost user) {
@@ -84,8 +77,7 @@ public class AuthenticationService{
     }
 
     public void addUser(UserPost user) {
-        String now = this.format.format(new Date());
-        User.addUser(user.getUsername(), user.getPassword(), now);
+        User.addUser(user.getUsername(), user.getPassword());
     }
 
     private boolean checkUserExist(String username) {

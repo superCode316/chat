@@ -1,7 +1,6 @@
-package hdu.homework.chat.config;
+package hdu.homework.chat.config.security;
 
 import hdu.homework.chat.utils.BeatsFilter;
-import hdu.homework.chat.utils.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -48,8 +47,8 @@ public class WebSecurityConfigAdapter extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilterBefore(getFilter(), UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(beatsFilter, JwtAuthenticationFilter.class);
+                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+//                .addFilterAfter(beatsFilter, JwtAuthenticationFilter.class);
         super.configure(http);
     }
 
@@ -58,5 +57,6 @@ public class WebSecurityConfigAdapter extends WebSecurityConfigurerAdapter {
     public CorsFilter getFilter() {
         return new CorsFilter();
     }
+
 
 }

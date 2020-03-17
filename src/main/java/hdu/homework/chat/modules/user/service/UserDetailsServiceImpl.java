@@ -1,15 +1,12 @@
 package hdu.homework.chat.modules.user.service;
 
-import hdu.homework.chat.entity.bean.Group;
-import hdu.homework.chat.entity.bean.User;
+import hdu.homework.chat.entity.bean.database.User;
 import hdu.homework.chat.modules.groups.model.GroupModel;
 import hdu.homework.chat.modules.user.model.UserModel;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020

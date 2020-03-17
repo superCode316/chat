@@ -1,10 +1,6 @@
 package hdu.homework.chat.entity.mapper;
 
-import hdu.homework.chat.entity.bean.Group;
-import org.springframework.jdbc.core.RowMapper;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import hdu.homework.chat.entity.bean.database.Group;
 
 public class GroupMapper extends AbstractMapper<Group> {
     @Override

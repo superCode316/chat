@@ -23,6 +23,7 @@ public class CommonHandler {
     @ExceptionHandler(value = {EmptyResultDataAccessException.class, SQLSyntaxErrorException.class})
     public ResponseEntity<Msg<?>> internalServerError(HttpServletRequest request, Exception e) {
         logger.error("an error occurred" + e.getLocalizedMessage());
+        e.printStackTrace();
         return ResultUtil.error(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

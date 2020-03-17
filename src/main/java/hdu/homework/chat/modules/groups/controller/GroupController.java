@@ -1,8 +1,7 @@
 package hdu.homework.chat.modules.groups.controller;
 
-import hdu.homework.chat.entity.bean.Group;
-import hdu.homework.chat.entity.bean.request.AddGroup;
-import hdu.homework.chat.entity.bean.request.JoinGroup;
+import hdu.homework.chat.annotations.GroupCheck;
+import hdu.homework.chat.entity.bean.database.Group;
 import hdu.homework.chat.entity.bean.response.Msg;
 import hdu.homework.chat.entity.bean.response.swagger.Forbidden;
 import hdu.homework.chat.entity.bean.response.swagger.GroupResponse;
@@ -20,7 +19,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Map;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020
@@ -45,11 +46,10 @@ public class GroupController {
             @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
-    public ResponseEntity<Msg<?>> add(@RequestBody AddGroup group) {
+    public ResponseEntity<Msg<?>> add(String name, String description, String avatarUrl) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        Group group1 = new Group();
-        ConvertUtils.convert(group1, group, Group.class, AddGroup.class);
-        service.addGroup(username, group1);
+        Group group = new Group(name, description, avatarUrl);
+        service.addGroup(username, group);
         return ResultUtil.success();
     }
 
@@ -62,6 +62,9 @@ public class GroupController {
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public ResponseEntity<Msg<?>> info(@RequestParam Integer id) {
         Group group = service.getGroupByGid(id);
+        if (group == null) {
+            return ResultUtil.error("没有该群的记录");
+        }
         return ResultUtil.success(group);
     }
 
@@ -72,8 +75,7 @@ public class GroupController {
             @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
-    public ResponseEntity<Msg<?>> join(@RequestBody JoinGroup join) {
-        Integer gid = join.getGid();
+    public ResponseEntity<Msg<?>> join(Integer gid) throws SQLException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (service.getGroupByGid(gid) == null)
             return ResultUtil.error("群组不存在");
@@ -94,4 +96,16 @@ public class GroupController {
         return ResultUtil.success(groups);
     }
 
+    @RequestMapping("/search")
+    public ResponseEntity<Msg<?>> searchGroups(@RequestParam String name) {
+        List<Group> groups = service.searchGroups(name);
+        return ResultUtil.success(groups);
+    }
+
+    @RequestMapping("/group-member")
+    @GroupCheck
+    public ResponseEntity<Msg<?>> getGroupMember(@RequestParam Integer gid) {
+        List<Map<String, Object>> result = service.getUsersInGroup(gid);
+        return ResultUtil.success(result);
+    }
 }

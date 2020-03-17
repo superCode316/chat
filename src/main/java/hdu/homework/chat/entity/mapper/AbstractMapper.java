@@ -8,12 +8,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
+import java.util.List;
 
 public abstract class AbstractMapper<T> implements RowMapper<T>, CustomMapper<T> {
+
+    private List<String> args;
+    public AbstractMapper(String...args){this.args = Arrays.asList(args);}
+    public AbstractMapper(){}
     @Override
     public T mapRow(ResultSet resultSet, int i) throws SQLException {
         Class<T> clazz = getClazz();
-        Field[] fields = clazz.getDeclaredFields();
+        Field[] fields = args!=null&&args.size()!=0 ? getRequiredFields(clazz.getDeclaredFields()) : clazz.getDeclaredFields();
         Constructor<T> constructor;
         Object obj;
         try {
@@ -29,9 +35,21 @@ public abstract class AbstractMapper<T> implements RowMapper<T>, CustomMapper<T>
         return (T) obj;
     }
 
+    private Field[] getRequiredFields(Field[] fields) {
+        Field[] result = new Field[args.size()];
+        int i = 0;
+        for (Field field : fields) {
+            if (args.contains(field.getName()))
+                result[i++] = field;
+        }
+        return result;
+    }
+
     private String getMethodName(Field field) {
         String val = field.getName();
         return
                 val.substring(0, 1).toUpperCase() + val.substring(1);
     }
+
+
 }

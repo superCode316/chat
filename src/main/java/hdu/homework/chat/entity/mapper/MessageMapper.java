@@ -1,6 +1,6 @@
 package hdu.homework.chat.entity.mapper;
 
-import hdu.homework.chat.entity.bean.Message;
+import hdu.homework.chat.entity.bean.database.Message;
 
 public class MessageMapper extends AbstractMapper<Message> {
     @Override

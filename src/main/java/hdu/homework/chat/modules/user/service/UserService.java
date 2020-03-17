@@ -1,8 +1,9 @@
 package hdu.homework.chat.modules.user.service;
 
-import hdu.homework.chat.entity.bean.Group;
-import hdu.homework.chat.entity.bean.User;
-import hdu.homework.chat.entity.bean.response.Friend;
+import hdu.homework.chat.entity.bean.database.Friend;
+import hdu.homework.chat.entity.bean.database.Group;
+import hdu.homework.chat.entity.bean.database.User;
+import hdu.homework.chat.entity.bean.response.FriendName;
 import hdu.homework.chat.modules.groups.model.GroupModel;
 import hdu.homework.chat.modules.user.model.FriendModel;
 import hdu.homework.chat.modules.user.model.UserModel;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020
@@ -18,8 +20,8 @@ import java.util.Map;
 @Service
 public class UserService {
     private UserModel userModel;
-    private GroupModel groupModel;
     private FriendModel friendModel;
+    private GroupModel groupModel;
 
     public UserService(UserModel userModel, GroupModel groupModel, FriendModel friendModel) {
         this.userModel = userModel;
@@ -28,26 +30,31 @@ public class UserService {
     }
 
     public Map<String, Object> getFullUserInfo(String username) {
-        Integer uid = userModel.getUidByPhone(username);
         User user = userModel.getUserByPhone(username);
         List<Group> groups = groupModel.getGroupsByUserName(username);
         return Map.of("userinfo", user, "groups", groups);
     }
 
+    public Map<String, Object> getLimitUserInfo(Integer uid) {
+        User user = userModel.getUserByUid(uid);
+        if (user==null) return null;
+        return Map.of("user_id", user.getUid(), "avatarUrl", Optional.ofNullable(user.getProfileURL()), "account", user.getAccount());
+    }
+
+    public Map<String, Object> getLimitUserInfo(String username) {
+        User user = userModel.getUserByPhone(username);
+        if (user==null) return null;
+        return Map.of("user_id", user.getUid(), "avatarUrl", user.getProfileURL(), "account", user.getAccount());
+    }
+
     public boolean checkInGroup(String username, Integer gid) {
         List<Group> groups = groupModel.getGroupsByUserName(username);
-        return groups.stream().anyMatch(group -> group.getG_id().equals(gid));
+        return groups.stream().anyMatch(group -> group.getGId().equals(gid));
     }
 
     public boolean checkExist(String username) {
         return userModel.getUserByPhone(username) == null;
     }
 
-    public void addFriend(String username, String friend) {
-        friendModel.addFriend(userModel.getUidByPhone(friend), userModel.getUidByPhone(username), DateUtils.getNowDateString());
-    }
 
-    public List<Friend> getFriends(String username) {
-        return friendModel.getFriends(userModel.getUidByPhone(username));
-    }
 }

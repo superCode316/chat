@@ -1,4 +1,4 @@
-package hdu.homework.chat.config;
+package hdu.homework.chat.config.security;
 
 import org.springframework.web.filter.OncePerRequestFilter;
 

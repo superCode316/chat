@@ -1,9 +1,7 @@
 package hdu.homework.chat.entity.factory;
 
-import hdu.homework.chat.entity.bean.Message;
-import hdu.homework.chat.modules.user.model.UserModel;
+import hdu.homework.chat.entity.bean.database.Message;
 import hdu.homework.chat.utils.DateUtils;
-import org.springframework.stereotype.Component;
 
 public class MessageFactory {
     private static final int PEOPLE = 0;
@@ -14,15 +12,11 @@ public class MessageFactory {
             this.message = new Message();
         }
         public MessageBuilder from(Integer sid) {
-            message.setSenderIDl(sid);
+            message.setSenderId(sid);
             return this;
         }
-        public MessageBuilder to(int tid, int type) {
-            if (type == PEOPLE) {
-                message.setRecieverID(tid);
-            } else {
-                message.setGroupID(tid);
-            }
+        public MessageBuilder to(int tid) {
+            message.setToId(tid);
             return this;
         }
         public MessageBuilder content(String content) {

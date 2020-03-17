@@ -8,7 +8,7 @@ import lombok.Data;
 @ApiModel()
 public class Msg<T> {
     private int code;
-    private String msg;
+    private String message;
     @ApiModelProperty(name = "返回数据")
     private T data;
 
@@ -18,12 +18,12 @@ public class Msg<T> {
 
     public Msg(Integer code, String msg, T obj) {
         this.code = code;
-        this.msg = msg;
+        this.message = msg;
         this.data = obj;
     }
 
     public Msg(Integer code, String msg) {
         this.code = code;
-        this.msg = msg;
+        this.message = msg;
     }
 }

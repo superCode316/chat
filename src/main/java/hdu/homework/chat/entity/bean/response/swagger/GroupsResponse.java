@@ -1,6 +1,6 @@
 package hdu.homework.chat.entity.bean.response.swagger;
 
-import hdu.homework.chat.entity.bean.Group;
+import hdu.homework.chat.entity.bean.database.Group;
 import hdu.homework.chat.entity.bean.response.Msg;
 import io.swagger.annotations.ApiModel;
 

@@ -1,4 +1,4 @@
-package hdu.homework.chat.entity.bean;
+package hdu.homework.chat.entity.bean.database;
 
 import lombok.Data;
 
@@ -8,7 +8,9 @@ import lombok.Data;
 @Data
 public class User {
     private int uid;
-    private String phone;
+    private String account;
     private String password;
     private String createTime;
+    private String name;
+    private String profileURL;
 }

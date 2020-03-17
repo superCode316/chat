@@ -1,6 +1,6 @@
 package hdu.homework.chat.modules.user.service;
 
-import hdu.homework.chat.entity.bean.User;
+import hdu.homework.chat.entity.bean.database.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -28,7 +28,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return mUser.getPhone();
+        return mUser.getAccount();
     }
 
     @Override

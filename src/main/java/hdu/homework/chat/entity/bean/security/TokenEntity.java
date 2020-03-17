@@ -1,4 +1,4 @@
-package hdu.homework.chat.entity.bean;
+package hdu.homework.chat.entity.bean.security;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

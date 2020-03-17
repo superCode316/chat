@@ -1,12 +1,11 @@
 package hdu.homework.chat.modules.groups.model;
 
-import hdu.homework.chat.entity.bean.Group;
+import hdu.homework.chat.entity.bean.database.Group;
 import hdu.homework.chat.entity.mapper.GroupMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,12 +13,12 @@ import java.util.List;
  */
 @Repository
 public class GroupModel {
-    private final String getGroup = "select * from groupInfo where g_id = ?";
-    private final String getGroupByName = "select * from groupInfo where name = ?";
-    private final String addGroup = "insert into groupInfo(name, creaTime, description, adminID, thumbnail_url) value (?,?,?,?,?)";
-    private final String getGroupByUserName = "select * from groupInfo where g_id in (select g_id from groupusers where u_id = (select u_id from `user` where account = ?))";
-    private final String getGroupByUser = "select * from groupInfo where g_id in (select g_id from groupusers where u_id = ?)";
-
+    private final String getGroup = "select * from group_info where g_id = ?";
+    private final String getGroupByName = "select * from group_info where name = ?";
+    private final String addGroup = "insert into group_info(name, create_time, description, admin_id, profile_url) value (?,?,?,?,?)";
+    private final String getGroupByUserName = "select * from group_info where g_id in (select g_id from group_users where u_id = (select u_id from `user` where account = ?)) or admin_id = (select u_id from `user` where account = ?)";
+    private final String getGroupByUser = "select * from group_info where g_id in (select g_id from group_users where u_id = ?) or admin_id = ?";
+    private final String getGetGroupByName = "select * from group_info where name like '%?' or name like '?%' or name like '%?%'";
     private JdbcTemplate template;
 
     @Autowired
@@ -42,14 +41,14 @@ public class GroupModel {
     }
 
     public List<Group> getGroupsByUserName(String username) {
-        return template.query(getGroupByUserName, new GroupMapper(), username);
-    }
-
-    public List<Group> getGroupsByUser(Integer id) {
-        return template.query(getGroupByUser, new GroupMapper(), id);
+        return template.query(getGroupByUserName, new GroupMapper(), username, username);
     }
 
     public void addGroup(Group group) {
-        template.update(addGroup, group.getName(), group.getCreaTime(), group.getDescription(), group.getAdminID(), group.getThumbnail_url());
+        template.update(addGroup, group.getName(), group.getCreateTime(), group.getDescription(), group.getAdminId(), group.getProfileUrl());
+    }
+
+    public List<Group> searchGroupsByName(String name) {
+        return template.query(getGetGroupByName, new GroupMapper(), name, name, name);
     }
 }

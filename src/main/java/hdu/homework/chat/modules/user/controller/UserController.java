@@ -1,18 +1,15 @@
 package hdu.homework.chat.modules.user.controller;
 
-import hdu.homework.chat.entity.bean.response.Friend;
-import hdu.homework.chat.entity.bean.response.JsonWebTokenResponse;
+import hdu.homework.chat.annotations.FriendCheck;
+import hdu.homework.chat.entity.bean.database.Friend;
+import hdu.homework.chat.entity.bean.response.FriendName;
 import hdu.homework.chat.entity.bean.response.Msg;
 import hdu.homework.chat.entity.bean.response.swagger.Forbidden;
 import hdu.homework.chat.entity.bean.response.swagger.FriendResponse;
-import hdu.homework.chat.entity.bean.response.swagger.LoginResponse;
 import hdu.homework.chat.entity.bean.response.swagger.SuccessResponse;
-import hdu.homework.chat.modules.groups.service.GroupService;
-import hdu.homework.chat.modules.user.service.UserDetailsServiceImpl;
+import hdu.homework.chat.modules.user.service.FriendService;
 import hdu.homework.chat.modules.user.service.UserService;
 import hdu.homework.chat.utils.ResultUtil;
-import hdu.homework.chat.entity.bean.request.UserPost;
-import hdu.homework.chat.modules.user.service.AuthenticationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -33,58 +30,14 @@ import java.util.Map;
 @RequestMapping("/user")
 @Api(tags = "用户相关接口")
 public class UserController {
-
-    private final AuthenticationService service;
+    private List<Integer> applyStatus = List.of(2,3);
+    private RedisTemplate<String, Object> redisTemplate;
     private UserService userService;
-    private UserDetailsServiceImpl userDetailsService;
-    private GroupService groupService;
-    private RedisTemplate<String, String> redis;
-    public UserController(AuthenticationService service, UserService userService, UserDetailsServiceImpl userDetailsService, GroupService groupService, RedisTemplate<String, String> redis) {
-        this.service = service;
+    private FriendService friendService;
+    public UserController(RedisTemplate<String, Object> redisTemplate, UserService userService, FriendService friendService) {
+        this.redisTemplate = redisTemplate;
         this.userService = userService;
-        this.userDetailsService = userDetailsService;
-        this.groupService = groupService;
-        this.redis = redis;
-    }
-
-    @ApiOperation(httpMethod = "POST", value = "用户登录接口", notes = "用户登录的返回数据。返回数据中的token需要保存，失效时间在数据中。在除了注册和登录请求意外的请求中，需要将token放在请求头中，格式为 x-access-token:TOKEN")
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    @ApiResponses({
-            @ApiResponse(code = 200, response = LoginResponse.class, message = "请求成功"),
-            @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
-            @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
-    })
-    public ResponseEntity<Msg<?>> postLogin(@RequestBody UserPost user) {
-        String loginSuccess = service.login(user.getUsername(), user.getPassword());
-        if (loginSuccess==null){
-            return ResultUtil.result(HttpStatus.FORBIDDEN, 1001,  "用户名或密码出错");
-        } else {
-            service.logUser(user.getUsername());
-            Object token = JsonWebTokenResponse.builder()
-                    .token(loginSuccess)
-                    .expire(service.getExpire());
-            Map<String, Object> map = userService.getFullUserInfo(user.getUsername());
-            return ResultUtil.success(Map.of("token", token, "groups", map.get("groups")));
-        }
-    }
-
-    @ApiOperation(httpMethod = "POST", value = "用户注册接口")
-    @ApiResponses({
-            @ApiResponse(code = 200, response = SuccessResponse.class, message = "请求成功"),
-            @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
-            @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
-    })
-    @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<Msg<?>> postRegister(@RequestBody UserPost user) {
-
-        String checkRegister = service.checkRegister(user);
-
-        if (checkRegister != null)
-            return ResultUtil.error(HttpStatus.BAD_REQUEST, checkRegister);
-
-        service.addUser(user);
-
-        return ResultUtil.success();
+        this.friendService = friendService;
     }
 
     @ApiOperation(httpMethod = "POST", value = "添加好友接口")
@@ -94,15 +47,18 @@ public class UserController {
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
     @RequestMapping(value = "/add-friend", method = RequestMethod.POST)
-    public ResponseEntity<Msg<?>> addFriend(@RequestBody UserPost user) {
+    @ResponseBody
+    public ResponseEntity<Msg<?>> addFriend(String friend) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (userService.checkExist(user.getUsername()))
-            return ResultUtil.error("没有此用户");
-        userService.addFriend(username, user.getUsername());
+        if (userService.checkExist(friend))
+            return ResultUtil.error(HttpStatus.BAD_REQUEST, "没有此用户");
+        if (friendService.isFriend(username, friend))
+            return ResultUtil.error(HttpStatus.BAD_REQUEST, "你和对方已经是朋友");
+        friendService.addFriend(username, friend);
         return ResultUtil.success();
     }
 
-    @ApiOperation(httpMethod = "GET", value = "查找好友接口")
+    @ApiOperation(httpMethod = "GET", value = "获取好友接口")
     @ApiResponses({
             @ApiResponse(code = 200, response = FriendResponse.class, message = "请求成功"),
             @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
@@ -111,7 +67,40 @@ public class UserController {
     @RequestMapping("/friends")
     public ResponseEntity<Msg<?>> getFriends() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Friend> friends = userService.getFriends(username);
+        Object friends = friendService.getFriends(username);
         return ResultUtil.success(friends);
     }
+
+    @RequestMapping(value = "/status", method = RequestMethod.GET)
+    @FriendCheck
+    public ResponseEntity<Msg<?>> getFriendStatus(@RequestParam Integer fid) {
+        Object isOnline = redisTemplate.opsForValue().get(String.valueOf(fid));
+        if (isOnline == null)
+            isOnline = Boolean.FALSE;
+        return ResultUtil.success(isOnline);
+    }
+
+    @RequestMapping("/search")
+    public ResponseEntity<Msg<?>> searchFriends(@RequestParam String name) {
+        Map<String, Object> userSearch = userService.getLimitUserInfo(name);
+        return ResultUtil.success(userSearch);
+    }
+
+    @RequestMapping("/get-applies")
+    public ResponseEntity<Msg<?>> getApplies() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Friend> applies = friendService.getApplies(username);
+        return ResultUtil.success(applies);
+    }
+
+    @RequestMapping(value = "/manage-apply", method = RequestMethod.POST)
+    public ResponseEntity<Msg<?>> manage(Integer fid, Integer isAgree) {
+        if (!applyStatus.contains(isAgree))
+            return ResultUtil.error(HttpStatus.BAD_REQUEST,"参数错误");
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        if (!friendService.applyStatus(username, fid, isAgree))
+            return ResultUtil.error(HttpStatus.BAD_REQUEST);
+        return ResultUtil.success();
+    }
+
 }
