@@ -15,6 +15,17 @@ public class IgnoreURI {
         ignoreURI.addAll(Arrays.asList(uris));
     }
     public boolean check(String uri) {
-        return ignoreURI.contains(uri);
+        if (ignoreURI.contains(uri))
+            return true;
+        final String[] uriSplit = uri.split("/");
+        return ignoreURI.stream().map(s -> s.split("/")).anyMatch(strings -> match(uriSplit, strings));
+    }
+    private boolean match(String[] s1, String[] s2) {
+        if (s1.length + 1 < s2.length || !s2[s2.length - 1].equals("**")) return false;
+        for (int i = 1; i < s2.length-1; i++) {
+            if (!s1[i].equals(s2[i]))
+                return false;
+        }
+        return true;
     }
 }

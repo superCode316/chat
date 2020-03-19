@@ -9,11 +9,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 public class IgnoreURIConfig {
-
     @Bean
     public IgnoreURI getIgnoreURI() {
         IgnoreURI ignoreURI = new IgnoreURI();
-        ignoreURI.add("/auth/login", "/auth/logout", "/auth/register");
+        ignoreURI.add("/auth/login", "/auth/logout", "/auth/register", "/public/login.html", "/static/**", "/favicon.ico");
         return ignoreURI;
     }
 }

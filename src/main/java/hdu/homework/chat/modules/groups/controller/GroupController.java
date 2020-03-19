@@ -108,4 +108,9 @@ public class GroupController {
         List<Map<String, Object>> result = service.getUsersInGroup(gid);
         return ResultUtil.success(result);
     }
+
+    @RequestMapping("/foo")
+    public String foobar() {
+        return "bar";
+    }
 }

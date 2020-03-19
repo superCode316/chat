@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>聊天界面</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <link rel="stylesheet" href="../static/css/me.css" th:href="@{/css/me.css}">
+</head>
+<body>
+
+    <script type="text/javascript">
+    var websocket = null;
+
+    //判断当前浏览器是否支持WebSocket
+    if('WebSocket' in window){
+        websocket = new WebSocket("ws://localhost:8080/websocket/ticket");
+    }
+    else{
+        alert('Not support websocket')
+    }
+
+    //连接发生错误的回调方法
+    websocket.onerror = function(){
+        setMessageInnerHTML("error");
+    };
+
+    //连接成功建立的回调方法
+    websocket.onopen = function(event){
+        setMessageInnerHTML("open");
+    }
+
+    //接收到消息的回调方法
+    websocket.onmessage = function(event){
+        setMessageInnerHTML(event.data);
+    }
+
+    //连接关闭的回调方法
+    websocket.onclose = function(){
+        setMessageInnerHTML("close");
+    }
+
+    //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
+    window.onbeforeunload = function(){
+        websocket.close();
+    }
+
+    //将消息显示在网页上
+    function setMessageInnerHTML(innerHTML){
+        // document.getElementById('message').innerHTML += innerHTML + '<br/>';
+        alert(innerHTML)
+    }
+
+    //关闭连接
+    function closeWebSocket(){
+        websocket.close();
+    }
+
+    //发送消息
+    function send(){
+        // var message = document.getElementById('text').value;
+        // websocket.send(message);
+    }
+</script>
+    <div class="ui container">
+        <div class="ui grid">
+            <!--左边个人信息内容-->
+            <div class="five wide column">
+                <div class="ui inverted top attached segment">
+                    <div class="ui middle aligned grid">
+                        <div class="four wide column">
+                            <a href="#"><img src="../static/images/unsplash.jpg" class="ui rounded image" style="width: 50px; height: 50px" alt=""></a>
+                        </div>
+                        <div class="twelve wide column">
+                            <h5 class="m-text-thin">用户名</h5>
+                        </div>
+                    </div>
+                    <div class="ui m-padded-tb m-padded-lr icon inverted transparent input">
+                        <input type="text" placeholder="搜索">
+                        <i class="search link icon"></i>
+                    </div>
+                    <div class="ui center aligned container">
+                        <div class="ui m-padded-tb divided inverted fifteen column grid">
+                            <div class="five wide column">
+
+                            </div>
+                            <div class="five wide column">
+
+                            </div>
+                            <div class="five wide column">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!--右边聊天内容-->
+            <div class="eleven wide column">
+
+            </div>
+
+        </div>
+    </div>
+
+<script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+<script>
+</script>
+</body>
+</html>

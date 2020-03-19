@@ -7,6 +7,7 @@ import hdu.homework.chat.entity.bean.response.swagger.Forbidden;
 import hdu.homework.chat.entity.bean.response.swagger.MessagesResponse;
 import hdu.homework.chat.entity.bean.response.swagger.SuccessResponse;
 import hdu.homework.chat.modules.message.service.MessageService;
+import hdu.homework.chat.modules.message.socket.WebSocket;
 import hdu.homework.chat.modules.user.service.UserDetailsServiceImpl;
 import hdu.homework.chat.modules.user.service.UserService;
 import hdu.homework.chat.utils.DateUtils;
@@ -15,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,6 +31,7 @@ import java.util.List;
 @Api(tags = "信息管理接口")
 @RestController
 @RequestMapping("/message")
+@Slf4j
 public class MessageController {
     private MessageService service;
     private UserService userService;
@@ -52,6 +55,12 @@ public class MessageController {
     @FriendCheck
     public ResponseEntity<Msg<?>> receiceMessage(Integer receiver, String content) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//        try {
+//            String receiverName = (String) userService.getLimitUserInfo(receiver).get("account");
+//            WebSocket.send(receiverName, content);
+//        } catch (Exception e) {
+//            log.error(e.getLocalizedMessage());
+//        }
         Message message1 = new Message(content, receiver);
         message1.setTime(DateUtils.getNowDateString());
         service.addMessage(username, message1);

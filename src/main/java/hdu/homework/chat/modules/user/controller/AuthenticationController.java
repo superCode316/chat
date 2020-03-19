@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**
@@ -43,16 +45,19 @@ public class AuthenticationController {
             @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
-    public ResponseEntity<Msg<?>> postLogin(@RequestBody UserPost user) {
+    public ResponseEntity<Msg<?>> postLogin(@RequestBody UserPost user, HttpServletResponse response) {
         String loginSuccess = service.login(user.getUsername(), user.getPassword());
         if (loginSuccess==null){
             return ResultUtil.result(HttpStatus.FORBIDDEN, 1001,  "用户名或密码出错");
         } else {
-//            service.logUser(user.getUsername());
             Object token = JsonWebTokenResponse.builder()
                     .token(loginSuccess)
                     .expire(service.getExpire());
             Map<String, Object> map = userService.getFullUserInfo(user.getUsername());
+            Cookie cookie = new Cookie("x-access-token", loginSuccess);
+            cookie.setMaxAge(1000*60*60);
+            cookie.setPath("/");
+            response.addCookie(cookie);
             return ResultUtil.success(Map.of("token", token, "groups", map.get("groups")));
         }
     }
