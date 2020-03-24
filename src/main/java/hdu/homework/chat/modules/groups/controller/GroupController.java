@@ -32,11 +32,9 @@ import java.util.Map;
 public class GroupController {
 
     private GroupService service;
-    private UserDetailsServiceImpl userService;
 
-    public GroupController(GroupService service, UserDetailsServiceImpl userService) {
+    public GroupController(GroupService service) {
         this.service = service;
-        this.userService = userService;
     }
 
     @ApiOperation("新增群组接口")
@@ -75,6 +73,7 @@ public class GroupController {
             @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
+    @GroupCheck(checkNotIn = true)
     public ResponseEntity<Msg<?>> join(Integer gid) throws SQLException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         if (service.getGroupByGid(gid) == null)
@@ -103,14 +102,10 @@ public class GroupController {
     }
 
     @RequestMapping("/group-member")
-    @GroupCheck
+    @GroupCheck(checkIn = true)
     public ResponseEntity<Msg<?>> getGroupMember(@RequestParam Integer gid) {
         List<Map<String, Object>> result = service.getUsersInGroup(gid);
         return ResultUtil.success(result);
     }
 
-    @RequestMapping("/foo")
-    public String foobar() {
-        return "bar";
-    }
 }

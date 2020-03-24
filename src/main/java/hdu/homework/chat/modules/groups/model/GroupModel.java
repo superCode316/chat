@@ -16,12 +16,10 @@ public class GroupModel {
     private final String getGroup = "select * from group_info where g_id = ?";
     private final String getGroupByName = "select * from group_info where name = ?";
     private final String addGroup = "insert into group_info(name, create_time, description, admin_id, profile_url) value (?,?,?,?,?)";
-    private final String getGroupByUserName = "select * from group_info where g_id in (select g_id from group_users where u_id = (select u_id from `user` where account = ?)) or admin_id = (select u_id from `user` where account = ?)";
-    private final String getGroupByUser = "select * from group_info where g_id in (select g_id from group_users where u_id = ?) or admin_id = ?";
-    private final String getGetGroupByName = "select * from group_info where name like '%?' or name like '?%' or name like '%?%'";
+    private final String getGroupByUserName = "select * from group_info where g_id in (select g_id from v_group_users where u_name = ?)";
+    private final String getGetGroupByName = "select * from group_info where name like ? or name like ? or name like ?";
     private JdbcTemplate template;
 
-    @Autowired
     public GroupModel(JdbcTemplate template) {
         this.template = template;
     }
@@ -41,7 +39,7 @@ public class GroupModel {
     }
 
     public List<Group> getGroupsByUserName(String username) {
-        return template.query(getGroupByUserName, new GroupMapper(), username, username);
+        return template.query(getGroupByUserName, new GroupMapper(), username);
     }
 
     public void addGroup(Group group) {
@@ -49,6 +47,6 @@ public class GroupModel {
     }
 
     public List<Group> searchGroupsByName(String name) {
-        return template.query(getGetGroupByName, new GroupMapper(), name, name, name);
+        return template.query(getGetGroupByName, new GroupMapper(), name+"%", "%"+name, "%"+name+"%");
     }
 }

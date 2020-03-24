@@ -7,7 +7,6 @@ import hdu.homework.chat.entity.bean.response.swagger.Forbidden;
 import hdu.homework.chat.entity.bean.response.swagger.MessagesResponse;
 import hdu.homework.chat.entity.bean.response.swagger.SuccessResponse;
 import hdu.homework.chat.modules.message.service.MessageService;
-import hdu.homework.chat.modules.message.socket.WebSocket;
 import hdu.homework.chat.modules.user.service.UserDetailsServiceImpl;
 import hdu.homework.chat.modules.user.service.UserService;
 import hdu.homework.chat.utils.DateUtils;

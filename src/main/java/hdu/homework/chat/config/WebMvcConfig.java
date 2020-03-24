@@ -1,6 +1,7 @@
 package hdu.homework.chat.config;
 
 import hdu.homework.chat.utils.FriendCheckInterceptor;
+import hdu.homework.chat.utils.GroupCheckInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -14,9 +15,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebMvcConfig implements WebMvcConfigurer {
 
     private FriendCheckInterceptor friendCheckInterceptor;
-
-    public WebMvcConfig(FriendCheckInterceptor friendCheckInterceptor) {
+    private GroupCheckInterceptor groupCheckInterceptor;
+    public WebMvcConfig(FriendCheckInterceptor friendCheckInterceptor, GroupCheckInterceptor groupCheckInterceptor) {
         this.friendCheckInterceptor = friendCheckInterceptor;
+        this.groupCheckInterceptor = groupCheckInterceptor;
     }
 
     @Override
@@ -33,6 +35,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(friendCheckInterceptor)
                 .addPathPatterns("/user/**")
+                .addPathPatterns("/message/**")
+                .order(1);
+        registry.addInterceptor(groupCheckInterceptor)
+                .addPathPatterns("/group/**")
                 .addPathPatterns("/message/**")
                 .order(1);
     }
