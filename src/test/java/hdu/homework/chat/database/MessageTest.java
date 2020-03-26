@@ -1,6 +1,6 @@
 package hdu.homework.chat.database;
 
-import hdu.homework.chat.entity.bean.Message;
+import hdu.homework.chat.entity.bean.database.Message;
 import hdu.homework.chat.entity.factory.MessageFactory;
 import hdu.homework.chat.modules.message.model.MessageModel;
 import org.junit.jupiter.api.Test;
@@ -17,15 +17,9 @@ public class MessageTest {
     public void insertMessage() {
         Message message = MessageFactory.instance()
                 .from(1)
-                .to(1, 0)
+                .to(1)
                 .content("foobar")
                 .build();
         messageModel.insertMessage(message);
-    }
-    @Test
-    public void getMessage() {
-        List<Message> messages = messageModel.getMessage(1);
-        System.out.println(messages);
-        assert messages.size() == 1;
     }
 }

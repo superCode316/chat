@@ -64,4 +64,8 @@ public class GroupService {
         }
         return result;
     }
+
+    public List<Integer> getGroupUsers(Integer gid) {
+        return guModel.getUsers(gid);
+    }
 }

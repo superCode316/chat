@@ -8,7 +8,9 @@ import hdu.homework.chat.entity.bean.response.swagger.Forbidden;
 import hdu.homework.chat.entity.bean.response.swagger.LoginResponse;
 import hdu.homework.chat.entity.bean.response.swagger.SuccessResponse;
 import hdu.homework.chat.modules.user.service.UserService;
+import hdu.homework.chat.utils.RedisUtil;
 import hdu.homework.chat.utils.ResultUtil;
+import hdu.homework.chat.utils.StringUtils;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -32,10 +34,12 @@ public class AuthenticationController {
 
     private final AuthenticationService service;
     private UserService userService;
+    private RedisUtil redisUtil;
 
-    public AuthenticationController(AuthenticationService service, UserService userService) {
+    public AuthenticationController(AuthenticationService service, UserService userService, RedisUtil redisUtil) {
         this.service = service;
         this.userService = userService;
+        this.redisUtil = redisUtil;
     }
 
     @ApiOperation(httpMethod = "POST", value = "用户登录接口", notes = "用户登录的返回数据。返回数据中的token需要保存，失效时间在数据中。在除了注册和登录请求意外的请求中，需要将token放在请求头中，格式为 x-access-token:TOKEN")
@@ -58,7 +62,11 @@ public class AuthenticationController {
             cookie.setMaxAge(1000*60*60);
             cookie.setPath("/");
             response.addCookie(cookie);
-            return ResultUtil.success(Map.of("token", token, "groups", map.get("groups"), "userid", ((User)map.get("userinfo")).getUid()));
+
+            String ticket = StringUtils.randomString(user.getUsername(), user.getPassword());
+            redisUtil.set(ticket, ((User)map.get("userinfo")).getUid());
+
+            return ResultUtil.success(Map.of("token", token, "groups", map.get("groups"), "userid", ((User)map.get("userinfo")).getUid(), "ticket", ticket));
         }
     }
 

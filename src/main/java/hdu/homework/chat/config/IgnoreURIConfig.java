@@ -12,7 +12,7 @@ public class IgnoreURIConfig {
     @Bean
     public IgnoreURI getIgnoreURI() {
         IgnoreURI ignoreURI = new IgnoreURI();
-        ignoreURI.add("/auth/login", "/auth/logout", "/auth/register", "/public/**", "/static/**", "/favicon.ico", "/swagger-ui.html", "/swagger-ui.html/**", "/webjars/**", "/v2/**");
+        ignoreURI.add("/auth/login", "/auth/logout", "/auth/register", "/public/**", "/static/**", "/favicon.ico", "/websocket/**");
         return ignoreURI;
     }
 }

@@ -34,6 +34,8 @@ public class GroupCheckInterceptor implements HandlerInterceptor {
         GroupCheck groupCheck = method.getMethodAnnotation(GroupCheck.class);
         if (groupCheck != null) {
             String _gid = request.getParameter("gid");
+            if (_gid == null)
+                _gid = request.getParameter("receiver");
             if (_gid == null|| !StringUtils.isDigit(_gid)) {
                 response.sendError(400);
                 return false;

@@ -73,7 +73,7 @@
             success: function (e) {
                 localStorage.setItem('groups_info', JSON.stringify(e.data.groups));
                 localStorage.setItem('userid', e.data.userid);
-                window.location.href = '/public/index.html'
+                window.location.href = '/public/index.html?ticket='+e.data.ticket;
             }
         });
     });

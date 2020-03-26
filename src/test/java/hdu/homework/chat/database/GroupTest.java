@@ -1,6 +1,6 @@
 package hdu.homework.chat.database;
 
-import hdu.homework.chat.entity.bean.Group;
+import hdu.homework.chat.entity.bean.database.Group;
 import hdu.homework.chat.modules.groups.model.GroupModel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
