@@ -28,4 +28,10 @@ public class MessageService {
     public List<Message> getMessages(Integer offset, Integer receiver, String username) {
         return messageModel.getUserByTargetAndId(receiver, offset, userModel.getUidByAccount(username));
     }
+
+    public List<Message> getGroupMessages(Integer receiver) {
+        if (receiver % 10 != 2)
+            return null;
+        return messageModel.getGroupMessages(receiver);
+    }
 }

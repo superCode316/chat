@@ -49,7 +49,7 @@ public class GroupService {
     }
 
     public List<Group> getGroupsByUserName(String username) {
-        return groupModel.getGroupsByUserName(username);
+        return groupModel.getGroupsByUserId(userModel.getUidByUsername(username));
     }
 
     public List<Group> searchGroups(String name) {

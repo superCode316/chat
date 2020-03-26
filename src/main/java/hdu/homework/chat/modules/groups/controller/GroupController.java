@@ -95,14 +95,26 @@ public class GroupController {
         return ResultUtil.success(groups);
     }
 
-    @RequestMapping("/search")
+    @RequestMapping(value = "/search", method = RequestMethod.GET)
+    @ApiOperation("搜索群组接口")
+    @ApiResponses({
+            @ApiResponse(code = 200, response = GroupsResponse.class, message = "请求成功"),
+            @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
+            @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
+    })
     public ResponseEntity<Msg<?>> searchGroups(@RequestParam String name) {
         List<Group> groups = service.searchGroups(name);
         return ResultUtil.success(groups);
     }
 
+    @ApiOperation("查询组员")
     @RequestMapping("/group-member")
     @GroupCheck(checkIn = true)
+    @ApiResponses({
+            @ApiResponse(code = 200, response = GroupsResponse.class, message = "请求成功"),
+            @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
+            @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
+    })
     public ResponseEntity<Msg<?>> getGroupMember(@RequestParam Integer gid) {
         List<Map<String, Object>> result = service.getUsersInGroup(gid);
         return ResultUtil.success(result);

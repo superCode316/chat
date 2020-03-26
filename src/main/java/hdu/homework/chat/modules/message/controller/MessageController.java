@@ -51,7 +51,7 @@ public class MessageController {
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
     @PostMapping("/send")
-    @FriendCheck
+//    @FriendCheck
     public ResponseEntity<Msg<?>> receiceMessage(Integer receiver, String content) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 //        try {
@@ -73,7 +73,7 @@ public class MessageController {
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
     @RequestMapping(value = "/get", method = RequestMethod.GET)
-    @FriendCheck(targetName = "receiver")
+//    @FriendCheck(targetName = "receiver")
     public ResponseEntity<Msg<?>> getMessage(@RequestParam(defaultValue = "0") Integer offsetId, @RequestParam Integer receiver, @RequestParam(defaultValue = "0") Integer type) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         List<Message> messages = service.getMessages(offsetId, receiver, username);
@@ -94,21 +94,17 @@ public class MessageController {
 //        return ResultUtil.success(messages);
 //    }
 
-//    @ApiOperation("获取群组消息的接口")
-//    @ApiResponses({
-//            @ApiResponse(code = 200, response = MessagesResponse.class, message = "请求成功"),
-//            @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
-//            @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
-//    })
-//    @RequestMapping(value = "/get-group", method = RequestMethod.GET)
-//    public ResponseEntity<Msg<?>> getGroupMessage(@RequestParam Integer offsetId, @RequestParam Integer receiver, @RequestParam Integer type) {
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//        RequestMessage body = new RequestMessage(offsetId, receiver, type);
-//        if (!userService.checkInGroup(username, body.getReceiver()))
-//            return ResultUtil.forbidden();
-//        List<Message> messages = service.getMessages(body, null);
-//        return ResultUtil.success(messages);
-//    }
+    @ApiOperation("获取群组消息的接口")
+    @ApiResponses({
+            @ApiResponse(code = 200, response = MessagesResponse.class, message = "请求成功"),
+            @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
+            @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
+    })
+    @RequestMapping(value = "/get-group", method = RequestMethod.GET)
+    public ResponseEntity<Msg<?>> getGroupMessage(@RequestParam Integer receiver) {
+        List<Message> messages = service.getGroupMessages(receiver);
+        return ResultUtil.success(messages);
+    }
 
     @FriendCheck
     @RequestMapping(value = "/public-key", method = RequestMethod.GET)

@@ -20,6 +20,7 @@ public class MessageModel {
     public MessageModel(JdbcTemplate template) {
         this.template = template;
     }
+    private final String getGroupMessages = "select * from messages where to_id = ?";
 
     public void insertMessage(Message message) {
         template.update(insertMessage, message.getContent(), message.getTime(), message.getSenderId(), message.getToId());
@@ -27,5 +28,9 @@ public class MessageModel {
 
     public List<Message> getUserByTargetAndId(Integer target, Integer offset, Integer sender) {
         return template.query(getMessageByTarget, new MessageMapper(), offset, target, sender, sender, target);
+    }
+
+    public List<Message> getGroupMessages(Integer target) {
+        return template.query(getGroupMessages, new MessageMapper(), target);
     }
 }

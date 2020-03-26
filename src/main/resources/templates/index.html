@@ -5,106 +5,219 @@
     <title>聊天界面</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
     <link rel="stylesheet" href="../static/css/me.css" th:href="@{/css/me.css}">
+    <meta name="viewport" content="width=1024">
 </head>
-<body>
+<body style="overflow: auto">
 
-    <script type="text/javascript">
-    var websocket = null;
-
-    //判断当前浏览器是否支持WebSocket
-    if('WebSocket' in window){
-        websocket = new WebSocket("ws://localhost:8080/websocket/ticket");
-    }
-    else{
-        alert('Not support websocket')
-    }
-
-    //连接发生错误的回调方法
-    websocket.onerror = function(){
-        setMessageInnerHTML("error");
-    };
-
-    //连接成功建立的回调方法
-    websocket.onopen = function(event){
-        setMessageInnerHTML("open");
-    }
-
-    //接收到消息的回调方法
-    websocket.onmessage = function(event){
-        setMessageInnerHTML(event.data);
-    }
-
-    //连接关闭的回调方法
-    websocket.onclose = function(){
-        setMessageInnerHTML("close");
-    }
-
-    //监听窗口关闭事件，当窗口关闭时，主动去关闭websocket连接，防止连接还没断开就关闭窗口，server端会抛异常。
-    window.onbeforeunload = function(){
-        websocket.close();
-    }
-
-    //将消息显示在网页上
-    function setMessageInnerHTML(innerHTML){
-        // document.getElementById('message').innerHTML += innerHTML + '<br/>';
-        alert(innerHTML)
-    }
-
-    //关闭连接
-    function closeWebSocket(){
-        websocket.close();
-    }
-
-    //发送消息
-    function send(){
-        // var message = document.getElementById('text').value;
-        // websocket.send(message);
-    }
-</script>
-    <div class="ui container">
-        <div class="ui grid">
-            <!--左边个人信息内容-->
-            <div class="five wide column">
-                <div class="ui inverted top attached segment">
-                    <div class="ui middle aligned grid">
-                        <div class="four wide column">
-                            <a href="#"><img src="../static/images/unsplash.jpg" class="ui rounded image" style="width: 50px; height: 50px" alt=""></a>
-                        </div>
-                        <div class="twelve wide column">
-                            <h5 class="m-text-thin">用户名</h5>
-                        </div>
-                    </div>
-                    <div class="ui m-padded-tb m-padded-lr icon inverted transparent input">
-                        <input type="text" placeholder="搜索">
-                        <i class="search link icon"></i>
-                    </div>
-                    <div class="ui center aligned container">
-                        <div class="ui m-padded-tb divided inverted fifteen column grid">
-                            <div class="five wide column">
-
-                            </div>
-                            <div class="five wide column">
-
-                            </div>
-                            <div class="five wide column">
-
-                            </div>
-                        </div>
+    <div class="main_inner">
+        <div class="panel">
+            <div class="header">
+                <div class="avatar">
+                    <img class="ui img rounded image" src="../static/images/unsplash.jpg" style="width: 50px; height: 50px">
+                </div>
+                <div class="info">
+                    <h3 class="nickname m-nickname-position">
+                        用户名
+                    </h3>
+<!--                    <label class="m-text-size" style="position: relative; top: 0;bottom: 0;left: 10px;right: 0">个性签名</label>-->
+                </div>
+            </div>
+            <div class="search_bar">
+                <div class="ui icon inverted transparent input">
+                    <input type="text" placeholder="搜索">
+                    <i class="search link icon"></i>
+                </div>
+            </div>
+            <div class="ui inverted section divider"></div>
+            <div class="nav_view" style="overflow: auto">
+                <!--好友列表-->
+                <div class="ui selection list" id="user_list">
+                </div>
+            </div>
+        </div>
+        <div class="box">
+            <!--聊天框顶部标题-->
+            <div class="box_hd">
+                <!--群成员-->
+<!--                <div id="charRoom">-->
+<!--                    <div id="chatRoom_members" class="mmpop members_wrp slide-down" tabindex="-1">-->
+<!--                        <div class="members">-->
+<!--                            <div class="members_inner">-->
+<!--                                <div class="member opt">-->
+<!--                                    <i class="web_wechat_add_friends"></i>-->
+<!--                                </div>-->
+<!--                                <div class="member">-->
+<!--                                    <img class="avatar" src="../static/images/unsplash.jpg" style="width: 55px;height: 55px;padding: 0!important;">-->
+<!--                                    <p style="font-size: 12px;margin-bottom: 1px">用户名</p>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                </div>-->
+                <div class="title_wrap">
+                    <div class="title poi">
+                        <a class="title_name title poi">用户名</a>
+                        <i class="web_wechat_down_icon"></i>
                     </div>
                 </div>
-
             </div>
-            <!--右边聊天内容-->
-            <div class="eleven wide column">
-
+            <!--聊天框-->
+            <div class="box_bd scroll-wrapper" style="position: absolute">
+                <div class="box_bd scroll-content" style="margin-bottom: 0;margin-right: 0;height: 494px;overflow: auto !important;" id="msg-content">
+<!--                    -->
+                    <div class="box_bd scroll-content" style=" opacity: 0">
+                        <div class="message-you you">
+                            <img class="avatar-chat-you" src="../static/images/unsplash.jpg">
+                            <div class="content">
+                                <div class="bubble bubble_default right">
+                                    <div class="bubble_cont">
+                                        <div class="plain">
+                                            <pre>这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息</pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+<!--                    &lt;!&ndash;这是我的消息&ndash;&gt;-->
+<!--                    <div class="box_bd scroll-content">-->
+<!--                        <div class="message-me me">-->
+<!--                            <img class="avatar-chat-me" src="../static/images/unsplash.jpg">-->
+<!--                            <div class="content">-->
+<!--                                <div class="bubble bubble_primary right">-->
+<!--                                    <div class="bubble_cont">-->
+<!--                                        <div class="plain">-->
+<!--                                            <pre>这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息</pre>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </div>-->
+                </div>
             </div>
-
+            <!--聊天框底部输入框和发送按钮-->
+            <div class="box_ft">
+                <div class="toolbar">
+                    <!--可以作为表情包等用途-->
+                </div>
+                <div class="content">
+<!--                    <form id="chatform">-->
+                        <textarea id="text" name="text" class="flex"></textarea>
+                        <div class="action">
+                            <button id="submit"  class="ui sumbit button btn" onclick="">发送</button>
+                        </div>
+<!--                    </form>-->
+                </div>
+            </div>
         </div>
     </div>
-
 <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
+<script src="http
+s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
 <script>
+    let count = 0;
+    const userid = localStorage.getItem('userid');
+    const def_your_message = '<div class="box_bd scroll-content">\n' +
+        '                        <div class="message-you you">\n' +
+        '                            <img class="avatar-chat-you" src="../static/images/unsplash.jpg">\n' +
+        '                            <div class="content">\n' +
+        '                                <div class="bubble bubble_default right">\n' +
+        '                                    <div class="bubble_cont">\n' +
+        '                                        <div class="plain">\n' +
+        '                                            <pre>CONTENT</pre>\n' +
+        '                                        </div>\n' +
+        '                                    </div>\n' +
+        '                                </div>\n' +
+        '                            </div>\n' +
+        '                        </div>\n' +
+        '                    </div>';
+    const def_my_message = '<div class="box_bd scroll-content">\n' +
+        '                        <div class="message-me me">\n' +
+        '                            <img class="avatar-chat-me" src="../static/images/unsplash.jpg">\n' +
+        '                            <div class="content">\n' +
+        '                                <div class="bubble bubble_primary right">\n' +
+        '                                    <div class="bubble_cont">\n' +
+        '                                        <div class="plain">\n' +
+        '                                            <pre>CONTENT</pre>\n' +
+        '                                        </div>\n' +
+        '                                    </div>\n' +
+        '                                </div>\n' +
+        '                            </div>\n' +
+        '                        </div>\n' +
+        '                    </div>' ;
+    const def_group_tab = '\n' +
+        '                    <div class="item" style="background: #2e3238;margin-bottom: 0.5em">\n' +
+        '                        <img class="ui rounded image" style="margin-left: 1em; width: 40px; height: 40px" onerror="this.src=\'/static/images/avatar.png\';" src="AVATAR_URL" alt="头像">\n' +
+        '                        <div class="content" >\n' +
+        '                            <div class="header" style="color: white">NAME</div>\n' +
+        '                        </div>\n' +
+        '                    </div>';
+    const saved_group = JSON.parse(localStorage.getItem('groups_info'));
+    const messageList = document.getElementById('msg-content');
+    $("#submit").click(function () {
+        const textArea = $("#text");
+        let data = textArea.val();
+        addMyMessage(data);
+        textArea.val('');
+        $.ajax({
+            type: "post",
+            url: "/message/send",
+            data: {receiver: 12,content:data},
+            withCredentials: true
+        });
+    });
+    for (let i of saved_group) {
+        const newTab = def_group_tab.replace('AVATAR_URL', i.profileUrl).replace('NAME', i.name);
+        console.log(newTab);
+        document.getElementById('user_list').innerHTML+=newTab;
+    }
+    (async function(){
+        const messages = await $.ajax('/message/get?receiver=12');
+        for (let i of messages.data){
+            await handleMessage(i.content)
+        }
+    })();
+    function addMyMessage(msg) {
+        const one = def_my_message.replace('CONTENT', msg);
+        addMessage(one);
+    }
+    async function handleMessage(msgBody) {
+        console.log(msgBody);
+        if (msgBody.senderId === undefined || msgBody.senderId === userid) {
+            return addMyMessage(msgBody);
+        }
+        let { senderId } = msgBody;
+        let userinfo;
+        if ((userinfo=localStorage.getItem('userinfo_' + senderId)) === null) {
+            userinfo = await (getNewUser(senderId));
+        }
+        const one = def_your_message.replace('CONTENT', msgBody.content);
+        addMessage(one)
+    }
+    async function getNewUser(uid) {
+        const res = await $.ajax('/user/info?uid='+uid);
+        if (res.code === 0) {
+            const userInfo= res.data;
+            localStorage.setItem('userinfo_' + uid, userInfo);
+            return userInfo;
+        }
+        return null;
+    }
+    function addMessage(msgHtml) {
+        count++;
+        messageList.innerHTML += msgHtml;
+    }
+    async function refreshMessage(gid) {
+        const messages = await $.ajax('/message/get-group?receiver=12');
+        console.log(messages);
+        const newMessages = messages.data.slice(count);
+        for (let i of newMessages) {
+            await handleMessage(i)
+        }
+    }
+    setInterval(refreshMessage, 2000);
 </script>
 </body>
+
 </html>

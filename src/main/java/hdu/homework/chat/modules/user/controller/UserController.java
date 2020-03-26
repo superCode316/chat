@@ -10,10 +10,12 @@ import hdu.homework.chat.entity.bean.response.swagger.SuccessResponse;
 import hdu.homework.chat.modules.user.service.FriendService;
 import hdu.homework.chat.modules.user.service.UserService;
 import hdu.homework.chat.utils.ResultUtil;
+import hdu.homework.chat.utils.StringUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -84,6 +86,14 @@ public class UserController {
     public ResponseEntity<Msg<?>> searchFriends(@RequestParam String name) {
         Map<String, Object> userSearch = userService.getLimitUserInfo(name);
         return ResultUtil.success(userSearch);
+    }
+
+    @RequestMapping("/info")
+    public ResponseEntity<Msg<?>> userBaseInfo(@RequestParam String uid) {
+        if (!StringUtils.isDigit(uid))
+            return ResultUtil.error(HttpStatus.BAD_REQUEST, "用户id不正确");
+        Map<String, Object> userInfo = userService.getLimitUserInfo(Integer.parseInt(uid));
+        return ResultUtil.success(userInfo);
     }
 
     @RequestMapping("/get-applies")

@@ -25,6 +25,8 @@ public class FriendCheckInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if (!(handler instanceof HandlerMethod))
+            return true;
         HandlerMethod method = (HandlerMethod) handler;
         FriendCheck friendCheck = method.getMethodAnnotation(FriendCheck.class);
         if (friendCheck != null) {

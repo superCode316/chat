@@ -1,13 +1,10 @@
 package hdu.homework.chat.modules.user.service;
 
-import hdu.homework.chat.entity.bean.database.Friend;
 import hdu.homework.chat.entity.bean.database.Group;
 import hdu.homework.chat.entity.bean.database.User;
-import hdu.homework.chat.entity.bean.response.FriendName;
 import hdu.homework.chat.modules.groups.model.GroupModel;
 import hdu.homework.chat.modules.user.model.FriendModel;
 import hdu.homework.chat.modules.user.model.UserModel;
-import hdu.homework.chat.utils.DateUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +28,7 @@ public class UserService {
 
     public Map<String, Object> getFullUserInfo(String username) {
         User user = userModel.getUserByPhone(username);
-        List<Group> groups = groupModel.getGroupsByUserName(username);
+        List<Group> groups = groupModel.getGroupsByUserId(userModel.getUidByAccount(username));
         return Map.of("userinfo", user, "groups", groups);
     }
 
@@ -48,7 +45,7 @@ public class UserService {
     }
 
     public boolean checkInGroup(String username, Integer gid) {
-        List<Group> groups = groupModel.getGroupsByUserName(username);
+        List<Group> groups = groupModel.getGroupsByUserId(userModel.getUidByAccount(username));
         return groups.stream().anyMatch(group -> group.getGId().equals(gid));
     }
 

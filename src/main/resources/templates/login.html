@@ -71,11 +71,8 @@
                 alert(e.responseJSON.msg)
             },
             success: function (e) {
-                // const token = e.data.token.token;
-                // var exp = new Date();
-                // exp.setTime(exp.getTime() + 60*60*1000);
-                // document.cookie = `x-access-token=+${token};expires=${exp.toUTCString()};path=/;`;
-                // localStorage.setItem('token', token);
+                localStorage.setItem('groups_info', JSON.stringify(e.data.groups));
+                localStorage.setItem('userid', e.data.userid);
                 window.location.href = '/public/index.html'
             }
         });

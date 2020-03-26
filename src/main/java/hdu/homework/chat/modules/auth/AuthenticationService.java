@@ -1,5 +1,6 @@
-package hdu.homework.chat.modules.user.service;
+package hdu.homework.chat.modules.auth;
 
+import hdu.homework.chat.entity.bean.database.JWToken;
 import hdu.homework.chat.entity.bean.database.User;
 import hdu.homework.chat.entity.bean.request.UserPost;
 import hdu.homework.chat.modules.user.model.UserModel;
@@ -7,8 +8,10 @@ import hdu.homework.chat.utils.JSONTokenUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -36,6 +39,18 @@ public class AuthenticationService{
         this.jsonTokenUtil = jsonTokenUtil;
         this.redis = redis;
         this.format = new SimpleDateFormat(dateFormat);
+    }
+
+    public UsernamePasswordAuthenticationToken verifyCookie(String cookie) {
+        UsernamePasswordAuthenticationToken token = null;
+        String username = jsonTokenUtil.getUsernameFromToken(cookie);
+        if (username != null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+            if (jsonTokenUtil.validateToken(cookie, userDetails)) {
+                token = new JWToken(userDetails, null, userDetails.getAuthorities());
+            }
+        }
+        return token;
     }
 
     public hdu.homework.chat.entity.bean.database.User getUserByPhone(String phone) {

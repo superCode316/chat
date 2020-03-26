@@ -16,7 +16,7 @@ public class GroupModel {
     private final String getGroup = "select * from group_info where g_id = ?";
     private final String getGroupByName = "select * from group_info where name = ?";
     private final String addGroup = "insert into group_info(name, create_time, description, admin_id, profile_url) value (?,?,?,?,?)";
-    private final String getGroupByUserName = "select * from group_info where g_id in (select g_id from v_group_users where u_name = ?)";
+    private final String getGroupByUserID = "select * from group_info where g_id in (select g_id from group_users where u_id = ?)";
     private final String getGetGroupByName = "select * from group_info where name like ? or name like ? or name like ?";
     private JdbcTemplate template;
 
@@ -38,8 +38,8 @@ public class GroupModel {
         return groups.get(0);
     }
 
-    public List<Group> getGroupsByUserName(String username) {
-        return template.query(getGroupByUserName, new GroupMapper(), username);
+    public List<Group> getGroupsByUserId(Integer userid) {
+        return template.query(getGroupByUserID, new GroupMapper(), userid);
     }
 
     public void addGroup(Group group) {

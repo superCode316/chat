@@ -1,12 +1,12 @@
-package hdu.homework.chat.modules.user.controller;
+package hdu.homework.chat.modules.auth;
 
+import hdu.homework.chat.entity.bean.database.User;
 import hdu.homework.chat.entity.bean.request.UserPost;
 import hdu.homework.chat.entity.bean.response.JsonWebTokenResponse;
 import hdu.homework.chat.entity.bean.response.Msg;
 import hdu.homework.chat.entity.bean.response.swagger.Forbidden;
 import hdu.homework.chat.entity.bean.response.swagger.LoginResponse;
 import hdu.homework.chat.entity.bean.response.swagger.SuccessResponse;
-import hdu.homework.chat.modules.user.service.AuthenticationService;
 import hdu.homework.chat.modules.user.service.UserService;
 import hdu.homework.chat.utils.ResultUtil;
 import io.swagger.annotations.ApiOperation;
@@ -58,7 +58,7 @@ public class AuthenticationController {
             cookie.setMaxAge(1000*60*60);
             cookie.setPath("/");
             response.addCookie(cookie);
-            return ResultUtil.success(Map.of("token", token, "groups", map.get("groups")));
+            return ResultUtil.success(Map.of("token", token, "groups", map.get("groups"), "userid", ((User)map.get("userinfo")).getUid()));
         }
     }
 
