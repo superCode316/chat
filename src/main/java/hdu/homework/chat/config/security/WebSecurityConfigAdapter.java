@@ -1,6 +1,5 @@
 package hdu.homework.chat.config.security;
 
-import hdu.homework.chat.utils.BeatsFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,11 +16,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfigAdapter extends WebSecurityConfigurerAdapter {
 
     private JwtAuthenticationFilter filter;
-    private BeatsFilter beatsFilter;
 
-    public WebSecurityConfigAdapter(JwtAuthenticationFilter filter, BeatsFilter beatsFilter) {
+    public WebSecurityConfigAdapter(JwtAuthenticationFilter filter) {
         this.filter = filter;
-        this.beatsFilter = beatsFilter;
     }
     @Override
     public void configure(WebSecurity web) {

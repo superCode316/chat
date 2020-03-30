@@ -56,8 +56,8 @@ public class MessageService {
 
 //        Set<Object> users = redisUtil.getGroupMember(String.valueOf(receiver));
         List<Integer> users = groupService.getGroupUsers(receiver);
-        for (Integer user : users) {
-            WebSocket.send(String.valueOf(user), content, sender);
-        }
+        users.forEach(user->
+            WebSocket.send(String.valueOf(user), content, sender)
+        );
     }
 }

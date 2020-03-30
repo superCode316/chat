@@ -38,28 +38,10 @@
         <div class="box">
             <!--聊天框顶部标题-->
             <div class="box_hd">
-                <!--群成员-->
-<!--                <div id="charRoom">-->
-<!--                    <div id="chatRoom_members" class="mmpop members_wrp slide-down" tabindex="-1">-->
-<!--                        <div class="members">-->
-<!--                            <div class="members_inner">-->
-<!--                                <div class="member opt">-->
-<!--                                    <i class="web_wechat_add_friends"></i>-->
-<!--                                </div>-->
-<!--                                <div class="member">-->
-<!--                                    <img class="avatar" src="../static/images/unsplash.jpg" style="width: 55px;height: 55px;padding: 0!important;">-->
-<!--                                    <p style="font-size: 12px;margin-bottom: 1px">用户名</p>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
                 <div class="title_wrap">
-                    <div class="title poi">
+                    <div class="title poi" id="header">
                         <a class="title_name title poi">用户名</a>
                         <i class="web_wechat_down_icon"></i>
-                        <h4>服务器连接丢失<a onclick="configSocket()">&nbsp重新连接</a></h4>
-
                     </div>
                 </div>
             </div>
@@ -140,6 +122,7 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
         '                            <div class="header" style="color: white">NAME</div>\n' +
         '                        </div>\n' +
         '                    </div>';
+    const connectError = '<h4 id="socketReconnect">服务器连接丢失<a onclick="configSocket()">&nbsp重新连接</a></h4>\n';
     const saved_group = JSON.parse(localStorage.getItem('groups_info'));
     const messageList = document.getElementById('msg-content');
     $("#submit").click(function () {
@@ -194,6 +177,11 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
     let websocket;
 
     function configSocket() {
+        const rec = document.getElementById('socketReconnect');
+
+        if (rec !== null)
+        document.getElementById('header').removeChild(rec);
+
         websocket = new WebSocket("ws://"+window.location.host+"/websocket/"+ticket);
 
         //连接发生错误的回调方法
@@ -226,7 +214,7 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
                         console.log('retry ' + t + ' times');
                     }
                 else
-                    alert('无法连接至服务器')
+                    showSocketError();
             }
             console.log('retrying...');
             retry();
@@ -241,7 +229,8 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
         };
     }
     function showSocketError() {
-
+        console.log('showSocketError');
+        document.getElementById('header').innerHTML += connectError;
     }
     configSocket();
     messageList.scrollTop = messageList.scrollHeight;

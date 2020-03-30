@@ -99,6 +99,7 @@ public class MessageController {
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
     @RequestMapping(value = "/get-group", method = RequestMethod.GET)
+    @GroupCheck(checkIn = true)
     public ResponseEntity<Msg<?>> getGroupMessage(@RequestParam Integer receiver) {
         List<Message> messages = service.getGroupMessages(receiver);
         return ResultUtil.success(messages);

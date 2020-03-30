@@ -12,6 +12,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020
@@ -31,11 +33,13 @@ public class GroupService {
     }
 
     public Group getGroupByGid(Integer gid) {
-        return groupModel.getGroupById(gid);
+        Optional<Group> group = groupModel.getGroupById(gid);
+        return group.orElse(null);
     }
 
     public Group getGroupByName(String name) {
-        return groupModel.getGroupByName(name);
+        Optional<Group> group = groupModel.getGroupByName(name);
+        return group.orElse(null);
     }
 
     public void addGroup(String username, Group g) {
@@ -57,12 +61,7 @@ public class GroupService {
     }
 
     public List<Map<String, Object>> getUsersInGroup(Integer gid) {
-        List<Integer> users = guModel.getUsers(gid);
-        List<Map<String, Object>> result = new ArrayList<>();
-        for (Integer i : users) {
-            result.add(service.getLimitUserInfo(i));
-        }
-        return result;
+        return guModel.getUsers(gid).stream().map(i->service.getLimitUserInfo(i)).collect(Collectors.toList());
     }
 
     public List<Integer> getGroupUsers(Integer gid) {
