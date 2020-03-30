@@ -1,4 +1,4 @@
-package hdu.homework.chat.entity.bean.database;
+package hdu.homework.chat.entity.bean.security;
 
 import lombok.Data;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

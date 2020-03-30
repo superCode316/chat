@@ -1,7 +1,6 @@
 package hdu.homework.chat.database;
 
 import hdu.homework.chat.entity.bean.database.Message;
-import hdu.homework.chat.entity.factory.MessageFactory;
 import hdu.homework.chat.modules.message.model.MessageModel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,13 +12,5 @@ import java.util.List;
 public class MessageTest {
     @Autowired
     private MessageModel messageModel;
-    @Test
-    public void insertMessage() {
-        Message message = MessageFactory.instance()
-                .from(1)
-                .to(1)
-                .content("foobar")
-                .build();
-        messageModel.insertMessage(message);
-    }
+
 }

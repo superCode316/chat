@@ -1,6 +1,6 @@
 package hdu.homework.chat.modules.auth;
 
-import hdu.homework.chat.entity.bean.database.JWToken;
+import hdu.homework.chat.entity.bean.security.JWToken;
 import hdu.homework.chat.entity.bean.database.User;
 import hdu.homework.chat.entity.bean.request.UserPost;
 import hdu.homework.chat.modules.user.model.UserModel;
@@ -11,12 +11,10 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Service;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020
@@ -30,15 +28,12 @@ public class AuthenticationService{
     private final RedisTemplate<String, Object> redis;
 
     private List<Character> symbols = List.of('.',',','!','@','#','$','%','+','-','*','/');
-    private SimpleDateFormat format;
-    private final String dateFormat = "yyyy-MM-dd HH:mm:ss";
 
     public AuthenticationService(UserModel User, @Qualifier("userdetails") UserDetailsService userDetailsService, JSONTokenUtil jsonTokenUtil, RedisTemplate<String, Object> redis) {
         this.User = User;
         this.userDetailsService = userDetailsService;
         this.jsonTokenUtil = jsonTokenUtil;
         this.redis = redis;
-        this.format = new SimpleDateFormat(dateFormat);
     }
 
     public UsernamePasswordAuthenticationToken verifyCookie(String cookie) {
@@ -51,10 +46,6 @@ public class AuthenticationService{
             }
         }
         return token;
-    }
-
-    public hdu.homework.chat.entity.bean.database.User getUserByPhone(String phone) {
-        return User.getUserByPhone(phone);
     }
 
     public String login(String username, String password) {
@@ -79,16 +70,17 @@ public class AuthenticationService{
     }
 
     private boolean validate(User user, String password) {
-        return user.getPassword().equals(password);
+        return user != null && user.getPassword().equals(password);
     }
 
-    public String checkRegister(UserPost user) {
+    public Optional<String> register(UserPost user) {
         if (checkUserExist(user.getUsername()))
-            return "已经有这个用户名了";
+            return Optional.of("已经有这个用户名了");
         if (!checkPasswordComplexity(user.getPassword())) {
-            return "用户名或密码太简单";
+            return Optional.of("用户名或密码太简单");
         }
-        return null;
+        addUser(user);
+        return Optional.empty();
     }
 
     public void addUser(UserPost user) {

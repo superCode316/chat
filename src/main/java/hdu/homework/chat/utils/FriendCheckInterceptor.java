@@ -1,7 +1,7 @@
 package hdu.homework.chat.utils;
 
 import hdu.homework.chat.annotations.FriendCheck;
-import hdu.homework.chat.modules.user.service.FriendService;
+//import hdu.homework.chat.modules.user.service.FriendService;
 import hdu.homework.chat.modules.user.service.UserService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -17,34 +17,34 @@ import java.lang.invoke.MethodHandle;
  */
 @Component
 public class FriendCheckInterceptor implements HandlerInterceptor {
-    private FriendService service;
+//    private FriendService service;
 
-    public FriendCheckInterceptor(FriendService service) {
-        this.service = service;
+    public FriendCheckInterceptor() {
+//        this.service = service;
     }
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (!(handler instanceof HandlerMethod))
-            return true;
-        HandlerMethod method = (HandlerMethod) handler;
-        FriendCheck friendCheck = method.getMethodAnnotation(FriendCheck.class);
-        if (friendCheck != null) {
-            String param = friendCheck.targetName();
-            int fid;
-            try {
-                fid = Integer.parseInt(request.getParameter(param));
-            } catch (NumberFormatException e) {
-                response.sendError(400, "参数错误");
-                return false;
-            }
-            if (fid < 0) return true;
-            String username = SecurityContextHolder.getContext().getAuthentication().getName();
-            if (!service.isFriend(username, fid)) {
-                response.sendError(403, "你和对方不是朋友");
-                return false;
-            }
-        }
+//        if (!(handler instanceof HandlerMethod))
+//            return true;
+//        HandlerMethod method = (HandlerMethod) handler;
+//        FriendCheck friendCheck = method.getMethodAnnotation(FriendCheck.class);
+//        if (friendCheck != null) {
+//            String param = friendCheck.targetName();
+//            int fid;
+//            try {
+//                fid = Integer.parseInt(request.getParameter(param));
+//            } catch (NumberFormatException e) {
+//                response.sendError(400, "参数错误");
+//                return false;
+//            }
+//            if (fid < 0) return true;
+//            String username = SecurityContextHolder.getContext().getAuthentication().getName();
+//            if (!service.isFriend(username, fid)) {
+//                response.sendError(403, "你和对方不是朋友");
+//                return false;
+//            }
+//        }
         return true;
     }
 }

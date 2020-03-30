@@ -1,6 +1,5 @@
 package hdu.homework.chat.config.security;
 
-import hdu.homework.chat.entity.bean.database.JWToken;
 import hdu.homework.chat.entity.bean.security.IgnoreURI;
 import hdu.homework.chat.modules.auth.AuthenticationService;
 import hdu.homework.chat.utils.JSONTokenUtil;
@@ -8,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;

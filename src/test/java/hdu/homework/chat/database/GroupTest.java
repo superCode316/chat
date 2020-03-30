@@ -18,9 +18,9 @@ public class GroupTest {
         groupModel.addGroup(group);
     }
 
-    @Test
-    public void getGroup() {
-        Optional<Group> group = groupModel.getGroupById(1);
-        assert group.get().equals(new Group(1, "test group", "2020-02-02 00:00:00", "description", 1, "", null));
-    }
+//    @Test
+//    public void getGroup() {
+//        Optional<Group> group = groupModel.getGroupById(1);
+//        assert group.get().equals(new Group(1, "test group", "2020-02-02 00:00:00", "description", 1, "", null));
+//    }
 }

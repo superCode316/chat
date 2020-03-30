@@ -2,6 +2,7 @@ package hdu.homework.chat.modules.groups.controller;
 
 import hdu.homework.chat.annotations.GroupCheck;
 import hdu.homework.chat.entity.bean.database.Group;
+import hdu.homework.chat.entity.bean.database.User;
 import hdu.homework.chat.entity.bean.response.Msg;
 import hdu.homework.chat.entity.bean.response.swagger.Forbidden;
 import hdu.homework.chat.entity.bean.response.swagger.GroupResponse;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020
@@ -59,11 +61,11 @@ public class GroupController {
     })
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public ResponseEntity<Msg<?>> info(@RequestParam Integer id) {
-        Group group = service.getGroupByGid(id);
-        if (group == null) {
+        Optional<Group> group = service.getGroupByGid(id);
+        if (group.isEmpty()) {
             return ResultUtil.error("没有该群的记录");
         }
-        return ResultUtil.success(group);
+        return ResultUtil.success(group.get());
     }
 
     @ApiOperation("加入群组接口")
@@ -76,7 +78,7 @@ public class GroupController {
     @GroupCheck(checkNotIn = true)
     public ResponseEntity<Msg<?>> join(Integer gid) throws SQLException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (service.getGroupByGid(gid) == null)
+        if (service.getGroupByGid(gid).isEmpty())
             return ResultUtil.error("群组不存在");
         service.joinGroup(gid, username);
         return ResultUtil.success();
@@ -116,7 +118,7 @@ public class GroupController {
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
     public ResponseEntity<Msg<?>> getGroupMember(@RequestParam Integer gid) {
-        List<Map<String, Object>> result = service.getUsersInGroup(gid);
+        List<User> result = service.getUsersInGroup(gid);
         return ResultUtil.success(result);
     }
 

@@ -14,10 +14,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebMvcConfig implements WebMvcConfigurer {
 
-    private FriendCheckInterceptor friendCheckInterceptor;
+//    private FriendCheckInterceptor friendCheckInterceptor;
     private GroupCheckInterceptor groupCheckInterceptor;
-    public WebMvcConfig(FriendCheckInterceptor friendCheckInterceptor, GroupCheckInterceptor groupCheckInterceptor) {
-        this.friendCheckInterceptor = friendCheckInterceptor;
+    public WebMvcConfig(GroupCheckInterceptor groupCheckInterceptor) {
+//        this.friendCheckInterceptor = friendCheckInterceptor;
         this.groupCheckInterceptor = groupCheckInterceptor;
     }
 
@@ -33,10 +33,10 @@ public class WebMvcConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(friendCheckInterceptor)
-                .addPathPatterns("/user/**")
-                .addPathPatterns("/message/**")
-                .order(1);
+//        registry.addInterceptor(friendCheckInterceptor)
+//                .addPathPatterns("/user/**")
+//                .addPathPatterns("/message/**")
+//                .order(1);
         registry.addInterceptor(groupCheckInterceptor)
                 .addPathPatterns("/group/**")
                 .addPathPatterns("/message/**")

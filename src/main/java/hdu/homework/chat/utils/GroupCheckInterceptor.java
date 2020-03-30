@@ -4,7 +4,6 @@ import hdu.homework.chat.annotations.FriendCheck;
 import hdu.homework.chat.annotations.GroupCheck;
 import hdu.homework.chat.entity.bean.database.Group;
 import hdu.homework.chat.modules.groups.service.GroupService;
-import hdu.homework.chat.modules.user.service.FriendService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
@@ -58,8 +57,7 @@ public class GroupCheckInterceptor implements HandlerInterceptor {
                 }
             }
             if (groupCheck.checkExist()) {
-                Group group = service.getGroupByGid(gid);
-                if (group == null) {
+                if (service.getGroupByGid(gid).isEmpty()) {
                     response.sendError(400, "没有该群");
                     return false;
                 }

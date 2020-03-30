@@ -1,17 +1,16 @@
 package hdu.homework.chat.modules.message.service;
 
 import hdu.homework.chat.entity.bean.database.Message;
+import hdu.homework.chat.modules.groups.model.GroupUserModel;
 import hdu.homework.chat.modules.groups.service.GroupService;
 import hdu.homework.chat.modules.message.model.MessageModel;
 import hdu.homework.chat.modules.message.socket.WebSocket;
 import hdu.homework.chat.modules.user.model.UserModel;
 import hdu.homework.chat.utils.DateUtils;
-import hdu.homework.chat.utils.RedisUtil;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020
@@ -20,13 +19,12 @@ import java.util.Set;
 public class MessageService {
     private MessageModel messageModel;
     private UserModel userModel;
-    private RedisUtil redisUtil;
-    private GroupService groupService;
-    public MessageService(MessageModel messageModel, UserModel userModel, RedisUtil redisUtil, GroupService groupService) {
+    private GroupUserModel guModel;
+
+    public MessageService(MessageModel messageModel, UserModel userModel, GroupUserModel guModel) {
         this.messageModel = messageModel;
         this.userModel = userModel;
-        this.redisUtil = redisUtil;
-        this.groupService = groupService;
+        this.guModel = guModel;
     }
 
     public void addMessage(Integer userid, Message message) {
@@ -55,7 +53,7 @@ public class MessageService {
         addMessage(sender, message1);
 
 //        Set<Object> users = redisUtil.getGroupMember(String.valueOf(receiver));
-        List<Integer> users = groupService.getGroupUsers(receiver);
+        List<Integer> users = guModel.getUsers(receiver);
         users.forEach(user->
             WebSocket.send(String.valueOf(user), content, sender)
         );

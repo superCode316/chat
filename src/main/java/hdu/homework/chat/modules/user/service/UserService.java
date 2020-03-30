@@ -3,13 +3,11 @@ package hdu.homework.chat.modules.user.service;
 import hdu.homework.chat.entity.bean.database.Group;
 import hdu.homework.chat.entity.bean.database.User;
 import hdu.homework.chat.modules.groups.model.GroupModel;
-import hdu.homework.chat.modules.user.model.FriendModel;
+//import hdu.homework.chat.modules.user.model.FriendModel;
 import hdu.homework.chat.modules.user.model.UserModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020
@@ -17,31 +15,21 @@ import java.util.Optional;
 @Service
 public class UserService {
     private UserModel userModel;
-    private FriendModel friendModel;
+//    private FriendModel friendModel;
     private GroupModel groupModel;
 
-    public UserService(UserModel userModel, GroupModel groupModel, FriendModel friendModel) {
+    public UserService(UserModel userModel, GroupModel groupModel) {
         this.userModel = userModel;
         this.groupModel = groupModel;
-        this.friendModel = friendModel;
+//        this.friendModel = friendModel;
     }
 
-    public Map<String, Object> getFullUserInfo(String username) {
-        User user = userModel.getUserByPhone(username);
-        List<Group> groups = groupModel.getGroupsByUserId(userModel.getUidByAccount(username));
-        return Map.of("userinfo", user, "groups", groups);
+    public User getLimitUserInfo(String username) {
+        return getLimitUserInfo(userModel.getUidByAccount(username));
     }
 
-    public Map<String, Object> getLimitUserInfo(Integer uid) {
-        User user = userModel.getUserByUid(uid);
-        if (user==null) return null;
-        return Map.of("user_id", user.getUid(), "avatarUrl", Optional.ofNullable(user.getProfileURL()), "account", user.getAccount());
-    }
-
-    public Map<String, Object> getLimitUserInfo(String username) {
-        User user = userModel.getUserByPhone(username);
-        if (user==null) return null;
-        return Map.of("user_id", user.getUid(), "avatarUrl", user.getProfileURL(), "account", user.getAccount());
+    public User getLimitUserInfo(Integer uid) {
+        return userModel.getLimitUserInfo(uid);
     }
 
     public boolean checkInGroup(String username, Integer gid) {

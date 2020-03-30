@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 /**
  * created by 钱曹宇@supercode on 3/8/2020
  */
@@ -19,24 +17,15 @@ public class UserModel {
     private final String countQuery = "select count(*) from user where account = ?";
     private final String insertQuery = "insert into user(account, pwd) value (?,?)";
     private final String getUidQuery = "select u_id from user where account = ?";
-
+    private final String limitUserInfo = "select u_id, account, profile_url from user where u_id = ?";
+    private final String allUserInfo = "select u_id, account, pwd, create_time, profile_url from user where account = ?";
     @Autowired
     public UserModel(JdbcTemplate template) {
         this.template = template;
     }
 
     public User getUserByPhone(String phone) {
-        List<User> users =  template.query(selectWherePhoneQuery, new UserMapper("uid","account","password","createTime","profileURL"), phone);
-        if (users.size() == 0)
-            return null;
-        return users.get(0);
-    }
-
-    public User getUserByUid(Integer uid) {
-        List<User> users =  template.query(selectWhereUidQuery, new UserMapper("uid","account","password","createTime","profileURL"), uid);
-        if (users.size() == 0)
-            return null;
-        return users.get(0);
+        return template.queryForObject(allUserInfo, new UserMapper("uid","account","password","createTime","profileURL"), phone);
     }
 
     public Integer getUidByAccount(String phone) {
@@ -51,4 +40,7 @@ public class UserModel {
         template.update(insertQuery, username, password);
     }
 
+    public User getLimitUserInfo(Integer uid) {
+        return template.queryForObject(limitUserInfo, new UserMapper("uid", "account", "profileURL"), uid);
+    }
 }

@@ -15,21 +15,15 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserModel userModel;
-    private GroupModel groupModel;
 
-    public UserDetailsServiceImpl(UserModel userModel, GroupModel groupModel) {
+    public UserDetailsServiceImpl(UserModel userModel) {
         this.userModel = userModel;
-        this.groupModel = groupModel;
     }
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         User user = userModel.getUserByPhone(s);
         return new UserDetailsImpl(user);
-    }
-
-    public Integer getUidByUsername(String username) {
-        return userModel.getUserByPhone(username).getUid();
     }
 
 }

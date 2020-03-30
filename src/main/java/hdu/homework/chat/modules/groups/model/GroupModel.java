@@ -6,7 +6,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020
@@ -24,18 +23,12 @@ public class GroupModel {
         this.template = template;
     }
 
-    public Optional<Group> getGroupById(Integer id) {
-        List<Group> result = template.query(getGroup, new GroupMapper(), id);
-        if (result.size() == 0)
-            return Optional.empty();
-        return Optional.ofNullable(result.get(0));
+    public Group getGroupById(Integer id) {
+        return template.queryForObject(getGroup, new GroupMapper(), id);
     }
 
-    public Optional<Group> getGroupByName(String name) {
-        List<Group> groups = template.query(getGroupByName, new GroupMapper(), name);
-        if (groups.size() == 0)
-            return Optional.empty();
-        return Optional.of(groups.get(0));
+    public Group getGroupByName(String name) {
+        return template.queryForObject(getGroupByName, new GroupMapper(), name);
     }
 
     public List<Group> getGroupsByUserId(Integer userid) {

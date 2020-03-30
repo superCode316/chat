@@ -2,28 +2,21 @@ package hdu.homework.chat.modules.user.controller;
 
 import hdu.homework.chat.annotations.FriendCheck;
 import hdu.homework.chat.entity.bean.database.Friend;
+import hdu.homework.chat.entity.bean.database.User;
 import hdu.homework.chat.entity.bean.response.FriendName;
 import hdu.homework.chat.entity.bean.response.Msg;
 import hdu.homework.chat.entity.bean.response.swagger.Forbidden;
 import hdu.homework.chat.entity.bean.response.swagger.FriendResponse;
 import hdu.homework.chat.entity.bean.response.swagger.SuccessResponse;
-import hdu.homework.chat.modules.user.service.FriendService;
+//import hdu.homework.chat.modules.user.service.FriendService;
 import hdu.homework.chat.modules.user.service.UserService;
 import hdu.homework.chat.utils.ResultUtil;
 import hdu.homework.chat.utils.StringUtils;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import org.apache.tomcat.util.http.ResponseUtil;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020
@@ -32,14 +25,13 @@ import java.util.Map;
 @RequestMapping("/user")
 @Api(tags = "用户相关接口")
 public class UserController {
-    private List<Integer> applyStatus = List.of(2,3);
     private RedisTemplate<String, Object> redisTemplate;
     private UserService userService;
-    private FriendService friendService;
-    public UserController(RedisTemplate<String, Object> redisTemplate, UserService userService, FriendService friendService) {
+//    private FriendService friendService;
+    public UserController(RedisTemplate<String, Object> redisTemplate, UserService userService) {
         this.redisTemplate = redisTemplate;
         this.userService = userService;
-        this.friendService = friendService;
+//        this.friendService = friendService;
     }
 
 //    @ApiOperation(httpMethod = "POST", value = "添加好友接口")
@@ -92,7 +84,7 @@ public class UserController {
     public ResponseEntity<Msg<?>> userBaseInfo(@RequestParam String uid) {
         if (!StringUtils.isDigit(uid))
             return ResultUtil.error(HttpStatus.BAD_REQUEST, "用户id不正确");
-        Map<String, Object> userInfo = userService.getLimitUserInfo(Integer.parseInt(uid));
+        User userInfo = userService.getLimitUserInfo(Integer.parseInt(uid));
         return ResultUtil.success(userInfo);
     }
 
