@@ -1,18 +1,29 @@
 package hdu.homework.chat.entity.bean.database;
 
+import hdu.homework.chat.modules.user.controller.UserController;
 import lombok.Data;
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020
  */
 @Data
+@Entity
 public class User {
-    private int uid;
+    @Id
+    private int uId;
     private String account;
     private String password;
     private String createTime;
     private String name;
-    private String profileURL;
+    private String profileUrl;
+    private String birth;
+    private String province;
+    private String city;
+    private String email;
+    private String sign;
     public User(){}
 
     public User(String account, String password) {

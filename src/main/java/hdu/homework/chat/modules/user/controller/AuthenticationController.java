@@ -1,12 +1,12 @@
-package hdu.homework.chat.modules.auth;
+package hdu.homework.chat.modules.user.controller;
 
 import hdu.homework.chat.entity.bean.database.Group;
 import hdu.homework.chat.entity.bean.database.User;
 import hdu.homework.chat.entity.bean.request.UserPost;
 import hdu.homework.chat.entity.bean.response.Msg;
 import hdu.homework.chat.entity.bean.response.swagger.Forbidden;
-import hdu.homework.chat.entity.bean.response.swagger.LoginResponse;
 import hdu.homework.chat.entity.bean.response.swagger.SuccessResponse;
+import hdu.homework.chat.modules.user.service.AuthenticationService;
 import hdu.homework.chat.modules.groups.service.GroupService;
 import hdu.homework.chat.modules.user.service.UserService;
 import hdu.homework.chat.utils.RedisUtil;
@@ -50,7 +50,7 @@ public class AuthenticationController {
     @ApiOperation(httpMethod = "POST", value = "用户登录接口", notes = "用户登录的返回数据。返回数据中的token需要保存，失效时间在数据中。在除了注册和登录请求意外的请求中，需要将token放在请求头中，格式为 x-access-token:TOKEN")
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ApiResponses({
-            @ApiResponse(code = 200, response = LoginResponse.class, message = "请求成功"),
+            @ApiResponse(code = 200, response = Object.class, message = "请求成功"),
             @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
@@ -68,11 +68,11 @@ public class AuthenticationController {
             response.addCookie(cookie);
 
             String ticket = StringUtils.randomString(user.getUsername(), user.getPassword());
-            redisUtil.set(ticket, userInfo.getUid());
+            redisUtil.set(ticket, userInfo.getUId());
 
             return ResultUtil.success(
                     Map.of("groups", groupList,
-                            "userid", userInfo.getUid(),
+                            "userid", userInfo.getUId(),
                             "ticket", ticket)
             );
         }

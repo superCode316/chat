@@ -162,6 +162,7 @@
     <script src="../static/lib/jquery.cxcalendar-1.5/js/jquery.cxcalendar.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
     <script type="text/javascript">
+        let fileChange = false;
         try{
             var sf=new Array();
             sf[0]=["北京市","东城|西城|崇文|宣武|朝阳|丰台|石景山|海淀|门头沟|房山|通州|顺义|昌平|大兴|平谷|怀柔|密云|延庆"];
@@ -222,25 +223,35 @@
             });
         });
 
+        $('#file').click(function () {
+            fileChange = true;
+        });
+
         //出生日期
         $('#date').cxCalendar({
             date: '1988/01/31'
         });
 
         $("#save").click(function () {
-            var head = $("#file").val();
-            var name = $("#nickname").val();
-            var sex = $("#sex").val();
-            var date = $("#date").val();
-            var pro = $("#pro").val();
-            var city = $("#city").val();
-            var autograph = $("#autograph").val();
-            var data = head+"&"+name+"&"+sex+"&"+date+"&"+pro+"&"+city+"&"+autograph;
+            let formData =new FormData();
+            formData.append('file', $("#file")[0].files[0]);
+            formData.append('name',$("#nickname").val());
+            formData.append('sex',$("#sex").val());
+            formData.append('date',$("#date").val());
+            formData.append('pro',$("#pro").val());
+            formData.append('city',$("#city").val());
+            formData.append('autograph',$("#autograph").val());
+            formData.append('data',head+"&"+name+"&"+sex+"&"+date+"&"+pro+"&"+city+"&"+autograph);
             $.ajax({
                 type: "post",
-                url: "information",
-                data: data,
-                dataType: "json",
+                url: "/user/update-profile",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (e) {
+                    alert('修改成功');
+                    console.log(e)
+                }
             });
         });
     </script>

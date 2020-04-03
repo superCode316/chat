@@ -37,17 +37,9 @@ import java.util.Set;
 @Slf4j
 public class MessageController {
     private MessageService service;
-    private UserDetailsServiceImpl userDetailsService;
-    private RedisTemplate<String, String> redis;
-    private GroupService groupService;
-    private RedisUtil redisUtil;
 
-    public MessageController(MessageService service, UserDetailsServiceImpl userDetailsService, RedisTemplate<String, String> redis, GroupService groupService, RedisUtil redisUtil) {
+    public MessageController(MessageService service) {
         this.service = service;
-        this.userDetailsService = userDetailsService;
-        this.redis = redis;
-        this.groupService = groupService;
-        this.redisUtil = redisUtil;
     }
 
     @ApiOperation("发送消息接口")
@@ -62,35 +54,6 @@ public class MessageController {
         service.sendMessage(receiver, content);
         return ResultUtil.success();
     }
-//
-//    @ApiOperation("获取用户和指定的用户消息的接口")
-//    @ApiResponses({
-//            @ApiResponse(code = 200, response = MessagesResponse.class, message = "请求成功"),
-//            @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
-//            @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
-//    })
-//    @RequestMapping(value = "/get", method = RequestMethod.GET)
-//    @GroupCheck(checkIn = true)
-//    public ResponseEntity<Msg<?>> getMessage(@RequestParam(defaultValue = "0") Integer offsetId, @RequestParam Integer receiver, @RequestParam(defaultValue = "0") Integer type) {
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//        List<Message> messages = service.getMessages(offsetId, receiver, username);
-//        return ResultUtil.success(messages);
-//    }
-
-    @Deprecated
-    @ApiOperation("获取用户发送的所有消息的接口")
-    @ApiResponses({
-            @ApiResponse(code = 200, response = MessagesResponse.class, message = "请求成功"),
-            @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
-            @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
-    })
-    @RequestMapping(value = "/sent", method = RequestMethod.GET)
-    public ResponseEntity<Msg<?>> sentMessage(@RequestParam(defaultValue = "") Integer receiver) {
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//        List<Message> messages = service.getSentMessage(username);
-//        return ResultUtil.success(messages);
-        return null;
-    }
 
     @ApiOperation("获取群组消息的接口")
     @ApiResponses({
@@ -104,27 +67,6 @@ public class MessageController {
         List<Message> messages = service.getGroupMessages(receiver);
         return ResultUtil.success(messages);
     }
-
-//    @FriendCheck
-//    @RequestMapping(value = "/public-key", method = RequestMethod.GET)
-//    public ResponseEntity<Msg<?>> getPublicKey(@RequestParam(defaultValue = "-1", required = false) Integer fid) {
-//        String key;
-//        if (fid == -1)
-//            key = redis.opsForValue().get("server_public_key");
-//        else
-//            key = redis.opsForValue().get("user_public_key_"+fid);
-//
-//        return ResultUtil.success(key);
-//    }
-//
-//    @RequestMapping(value = "/public-key", method = RequestMethod.POST)
-//    public ResponseEntity<Msg<?>> postPublicKey(HttpServletRequest request) {
-//        String key = request.getParameter("key");
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-//        Integer uid = userDetailsService.getUidByUsername(username);
-//        redis.opsForValue().set("user_public_key_"+uid, key);
-//        return ResultUtil.success();
-//    }
 //
 //    /**
 //     * TODO：消息加解密

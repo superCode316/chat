@@ -1,7 +1,7 @@
 package hdu.homework.chat.config.security;
 
 import hdu.homework.chat.entity.bean.security.IgnoreURI;
-import hdu.homework.chat.modules.auth.AuthenticationService;
+import hdu.homework.chat.modules.user.service.AuthenticationService;
 import hdu.homework.chat.utils.JSONTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -59,7 +59,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         UsernamePasswordAuthenticationToken token = null;
         if (header != null && !StringUtils.isEmpty(header)) {
-            String username = util.getUsernameFromToken(header);
             token = authenticationService.verifyCookie(header);
             if (token != null)
                 token.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpServletRequest));

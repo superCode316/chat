@@ -1,13 +1,9 @@
 package hdu.homework.chat.modules.user.service;
 
-import hdu.homework.chat.entity.bean.database.Group;
 import hdu.homework.chat.entity.bean.database.User;
-import hdu.homework.chat.modules.groups.model.GroupModel;
-//import hdu.homework.chat.modules.user.model.FriendModel;
 import hdu.homework.chat.modules.user.model.UserModel;
+import hdu.homework.chat.modules.user.repo.UserRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020
@@ -15,31 +11,26 @@ import java.util.List;
 @Service
 public class UserService {
     private UserModel userModel;
-//    private FriendModel friendModel;
-    private GroupModel groupModel;
+    private UserRepository userRepository;
 
-    public UserService(UserModel userModel, GroupModel groupModel) {
+    public UserService(UserModel userModel, UserRepository userRepository) {
         this.userModel = userModel;
-        this.groupModel = groupModel;
-//        this.friendModel = friendModel;
+        this.userRepository = userRepository;
     }
 
-    public User getLimitUserInfo(String username) {
-        return getLimitUserInfo(userModel.getUidByAccount(username));
+    public User getLimitUserInfo(String account) {
+        return userModel.getLimitUserInfo(account);
     }
 
     public User getLimitUserInfo(Integer uid) {
         return userModel.getLimitUserInfo(uid);
     }
 
-    public boolean checkInGroup(String username, Integer gid) {
-        List<Group> groups = groupModel.getGroupsByUserId(userModel.getUidByAccount(username));
-        return groups.stream().anyMatch(group -> group.getGId().equals(gid));
+    public User getFullUserInfo(String account) {
+        return userModel.getFullUserInfo(account);
     }
 
-    public boolean checkExist(String username) {
-        return userModel.getUserByPhone(username) == null;
+    public void saveUserProfile(User user) {
+        userRepository.save(user);
     }
-
-
 }

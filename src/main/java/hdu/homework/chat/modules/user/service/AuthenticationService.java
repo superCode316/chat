@@ -1,4 +1,4 @@
-package hdu.homework.chat.modules.auth;
+package hdu.homework.chat.modules.user.service;
 
 import hdu.homework.chat.entity.bean.security.JWToken;
 import hdu.homework.chat.entity.bean.database.User;
@@ -38,9 +38,9 @@ public class AuthenticationService{
 
     public UsernamePasswordAuthenticationToken verifyCookie(String cookie) {
         UsernamePasswordAuthenticationToken token = null;
-        String username = jsonTokenUtil.getUsernameFromToken(cookie);
-        if (username != null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        String account = jsonTokenUtil.getUsernameFromToken(cookie);
+        if (account != null) {
+            UserDetails userDetails = userDetailsService.loadUserByUsername(account);
             if (jsonTokenUtil.validateToken(cookie, userDetails)) {
                 token = new JWToken(userDetails, null, userDetails.getAuthorities());
             }
@@ -48,21 +48,21 @@ public class AuthenticationService{
         return token;
     }
 
-    public String login(String username, String password) {
+    public String login(String account, String password) {
         User user;
         try {
-            user = User.getUserByPhone(username);
+            user = User.getAuthenticationInfo(account);
             if (!validate(user, password)) return null;
         } catch (EmptyResultDataAccessException | NullPointerException e) {
             return null;
         }
-        addToRedis(username);
-        UserDetails details = userDetailsService.loadUserByUsername(username);
+        addToRedis(account);
+        UserDetails details = userDetailsService.loadUserByUsername(account);
         return jsonTokenUtil.generateToken(details);
     }
 
-    private void addToRedis(String username) {
-        redis.opsForValue().set(username, true, 1800L);
+    private void addToRedis(String account) {
+        redis.opsForValue().set(account, true, 1800L);
     }
 
     public int getExpire() {
@@ -78,6 +78,9 @@ public class AuthenticationService{
             return Optional.of("已经有这个用户名了");
         if (!checkPasswordComplexity(user.getPassword())) {
             return Optional.of("用户名或密码太简单");
+        }
+        if (user.getUsername().length() != 11) {
+            return Optional.of("用户名必须为电话号码");
         }
         addUser(user);
         return Optional.empty();

@@ -33,6 +33,12 @@ public class SQLHandler {
         Throwable[] throwables = e.getSuppressed();
         return ResultUtil.error(HttpStatus.BAD_REQUEST,"记录重复");
     }
+    @ExceptionHandler(value = EmptyResultDataAccessException.class)
+    public ResponseEntity<Msg<?>> emptyResultError(HttpServletRequest request, Exception e) {
+        StackTraceElement[] element = e.getStackTrace();
+        Throwable[] throwables = e.getSuppressed();
+        return ResultUtil.error(HttpStatus.NOT_FOUND);
+    }
 
     private String getReason(Exception e) {
         return e.getMessage().split("java.sql.SQLException: ")[1];

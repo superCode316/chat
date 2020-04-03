@@ -47,9 +47,9 @@ public class GroupController {
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
     public ResponseEntity<Msg<?>> add(String name, String description, String avatarUrl) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String account = SecurityContextHolder.getContext().getAuthentication().getName();
         Group group = new Group(name, description, avatarUrl);
-        service.addGroup(username, group);
+        service.addGroup(account, group);
         return ResultUtil.success();
     }
 
@@ -77,10 +77,10 @@ public class GroupController {
     })
     @GroupCheck(checkNotIn = true)
     public ResponseEntity<Msg<?>> join(Integer gid) throws SQLException {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        String account = SecurityContextHolder.getContext().getAuthentication().getName();
         if (service.getGroupByGid(gid).isEmpty())
             return ResultUtil.error("群组不存在");
-        service.joinGroup(gid, username);
+        service.joinGroup(gid, account);
         return ResultUtil.success();
     }
 
@@ -92,8 +92,8 @@ public class GroupController {
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
     public ResponseEntity<Msg<?>> getAllGroups() {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Group> groups = service.getGroupsByUserName(username);
+        String account = SecurityContextHolder.getContext().getAuthentication().getName();
+        List<Group> groups = service.getGroupsByUserName(account);
         return ResultUtil.success(groups);
     }
 

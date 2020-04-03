@@ -32,8 +32,8 @@ public class MessageService {
         messageModel.insertMessage(message);
     }
 
-    public List<Message> getMessages(Integer offset, Integer receiver, String username) {
-        return messageModel.getUserByTargetAndId(receiver, offset, userModel.getUidByAccount(username));
+    public List<Message> getMessages(Integer offset, Integer receiver, String account) {
+        return messageModel.getUserByTargetAndId(receiver, offset, userModel.getUidByAccount(account));
     }
 
     public List<Message> getGroupMessages(Integer receiver) {
@@ -43,8 +43,8 @@ public class MessageService {
     }
 
     public void sendMessage(Integer receiver, String content) {
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        sendMessage(userModel.getUidByAccount(username), receiver, content);
+        String account = SecurityContextHolder.getContext().getAuthentication().getName();
+        sendMessage(userModel.getUidByAccount(account), receiver, content);
     }
 
     public void sendMessage(Integer sender, Integer receiver, String content) {

@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class GroupService {
+
     private GroupModel groupModel;
     private GroupUserModel guModel;
     private UserModel userModel;
@@ -33,18 +34,18 @@ public class GroupService {
         return Optional.ofNullable(group);
     }
 
-    public void addGroup(String username, Group g) {
-        g.setAdminId(userModel.getUidByAccount(username));
+    public void addGroup(String account, Group g) {
+        g.setAdminId(userModel.getUidByAccount(account));
         g.setCreateTime(DateUtils.getNowDateString());
         groupModel.addGroup(g);
     }
 
-    public void joinGroup(Integer gid, String username) throws SQLException {
-        guModel.join(gid, userModel.getUidByAccount(username), DateUtils.getNowDateString());
+    public void joinGroup(Integer gid, String account) {
+        guModel.join(gid, userModel.getUidByAccount(account), DateUtils.getNowDateString());
     }
 
-    public List<Group> getGroupsByUserName(String username) {
-        return groupModel.getGroupsByUserId(userModel.getUidByAccount(username));
+    public List<Group> getGroupsByUserName(String account) {
+        return groupModel.getGroupsByUserId(userModel.getUidByAccount(account));
     }
 
     public List<Group> searchGroups(String name) {
