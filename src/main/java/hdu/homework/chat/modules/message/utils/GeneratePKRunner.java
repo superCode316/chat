@@ -1,4 +1,4 @@
-package hdu.homework.chat.modules.message.socket;
+package hdu.homework.chat.modules.message.utils;
 
 import hdu.homework.chat.utils.RsaUtils;
 import org.springframework.boot.CommandLineRunner;

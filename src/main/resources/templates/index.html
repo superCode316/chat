@@ -50,7 +50,7 @@
             <div class="box_bd scroll-content" style="margin-bottom: 0;margin-right: 0;height: 494px;overflow: auto !important;" id="msg-content">
                 <!--                    -->
                 <div class="box_bd scroll-content" style="">
-                    <div  class="message-you you">
+                    <div  class="messages-you you">
                         <img onclick="show()" class="avatar-chat-you" src="../static/images/unsplash.jpg">
                         <div class="content">
                             <div class="bubble bubble_default right">
@@ -100,7 +100,7 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
     let count = 0;
     const userid = Number.parseInt(localStorage.getItem('userid'));
     const def_your_message = '<div class="box_bd scroll-content">\n' +
-        '                        <div class="message-you you">\n' +
+        '                        <div class="messages-you you">\n' +
         '                            <img onclick="show(UID)" class="avatar-chat-you" src="../static/images/unsplash.jpg">\n' +
         '                            <div class="content">\n' +
         '                                <div class="bubble bubble_default right">\n' +
@@ -114,7 +114,7 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
         '                        </div>\n' +
         '                    </div>';
     const def_my_message = '<div class="box_bd scroll-content">\n' +
-        '                        <div class="message-me me">\n' +
+        '                        <div class="messages-me me">\n' +
         '                            <img class="avatar-chat-me" src="../static/images/unsplash.jpg">\n' +
         '                            <div class="content">\n' +
         '                                <div class="bubble bubble_primary right">\n' +
@@ -141,7 +141,12 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
         const textArea = $("#text");
         let data = textArea.val();
         textArea.val('');
-        websocket.send(JSON.stringify({groupId:12,content:data}))
+        // websocket.send(JSON.stringify({groupId:12,content:data}))
+        $.ajax({
+            url:'/message/send',
+            data: {receiver:12,content:data,senderId: userid},
+            method: "POST"
+        })
     });
     for (let i of saved_group) {
         const newTab = def_group_tab.replace('AVATAR_URL', i.profileUrl).replace('NAME', i.name);
@@ -289,7 +294,7 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
             textArea.val('');
             $.ajax({
                 type: "post",
-                url: "/message/send",
+                url: "/messages/send",
                 data: {receiver: 12,content:data},
                 withCredentials: true
             });

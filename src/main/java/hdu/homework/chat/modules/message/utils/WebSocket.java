@@ -1,8 +1,6 @@
-package hdu.homework.chat.modules.message.socket;
+package hdu.homework.chat.modules.message.utils;
 
 import com.google.gson.Gson;
-import hdu.homework.chat.entity.bean.request.Message;
-import hdu.homework.chat.modules.message.service.MessageService;
 import hdu.homework.chat.utils.RedisUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +11,6 @@ import javax.websocket.*;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -26,19 +23,11 @@ public class WebSocket {
     private String userid;
     private Gson gson = new Gson();
     public static ConcurrentHashMap<String, WebSocket> webSocketSet = new ConcurrentHashMap<>();
-    private static ConcurrentHashMap<String, String> userSessionId = new ConcurrentHashMap<>();
-    private static RedisUtil redisUtil;
-    private static MessageService messageService;
+    private static ConcurrentHashMap<String, String> userTickets = new ConcurrentHashMap<>();
 
     private static ApplicationContext applicationContext;
     public static void setApplicationContext(ApplicationContext applicationContext) {
         WebSocket.applicationContext = applicationContext;
-        messageService = applicationContext.getBean(MessageService.class);
-    }
-
-    @Autowired
-    public static void setRedisUtil(RedisUtil redisUtil) {
-        WebSocket.redisUtil = redisUtil;
     }
 
     public static void send(String username, String msg, Integer sender) {
@@ -52,20 +41,22 @@ public class WebSocket {
         }
     }
 
+    public static void setUserTicket(String ticket, String userid) {
+        userTickets.put(ticket, userid);
+    }
+
     private Session session;
 
     @OnOpen
     public void onOpen(Session session, @PathParam("ticket") String ticket) {
-        if (redisUtil==null)
-            redisUtil = applicationContext.getBean(RedisUtil.class);
         this.session = session;
-        userid = String.valueOf(redisUtil.get(ticket));
+//        userid = String.valueOf(redisUtil.get(ticket));
+        userid = userTickets.get(ticket);
         if (userid == null) {
             this.onClose();
             return;
         };
         webSocketSet.put(userid, this);
-        userSessionId.put(session.getId(), userid);
     }
 
     @OnClose
@@ -76,8 +67,7 @@ public class WebSocket {
 
     @OnMessage
     public void onMessage(String message, Session session) {
-        Message message1 = gson.fromJson(message, Message.class);
-        messageService.sendMessage(Integer.parseInt(userSessionId.get(session.getId())), message1.getGroupId(), message1.getContent());
+
     }
 
      @OnError

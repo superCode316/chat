@@ -1,16 +1,15 @@
 package hdu.homework.chat.modules.groups.service;
 
-import hdu.homework.chat.entity.bean.database.Group;
-import hdu.homework.chat.entity.bean.database.User;
-import hdu.homework.chat.modules.groups.model.GroupModel;
-import hdu.homework.chat.modules.groups.model.GroupUserModel;
+import hdu.homework.chat.entity.bean.database.GroupInfo;
+import hdu.homework.chat.entity.bean.database.GroupUsers;
+import hdu.homework.chat.modules.groups.model.GroupRepository;
+import hdu.homework.chat.modules.groups.model.GroupUserRepository;
 import hdu.homework.chat.modules.user.model.UserRepository;
 import hdu.homework.chat.utils.DateUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020
@@ -18,41 +17,41 @@ import java.util.stream.Collectors;
 @Service
 public class GroupService {
 
-    private GroupModel groupModel;
-    private GroupUserModel guModel;
+    private GroupUserRepository guRepository;
     private UserRepository userRepository;
+    private GroupRepository groupRepository;
 
-    public GroupService(GroupModel groupModel, GroupUserModel guModel, UserRepository userRepository) {
-        this.groupModel = groupModel;
-        this.guModel = guModel;
+    public GroupService(GroupUserRepository guRepository, UserRepository userRepository, GroupRepository groupRepository) {
+        this.guRepository = guRepository;
         this.userRepository = userRepository;
+        this.groupRepository = groupRepository;
     }
 
-    public Optional<Group> getGroupByGid(Integer gid) {
-        Group group = groupModel.getGroupById(gid);
-        return Optional.ofNullable(group);
+    public Optional<GroupInfo> getGroupByGid(Integer gid) {
+        GroupInfo groupInfo = groupRepository.getGroupInfoBygId(gid);
+        return Optional.ofNullable(groupInfo);
     }
 
-    public void addGroup(String account, Group g) {
+    public void addGroup(String account, GroupInfo g) {
         g.setAdminId(userRepository.getUidByAccount(account));
         g.setCreateTime(DateUtils.getNowDateString());
-        groupModel.addGroup(g);
+        groupRepository.save(g);
     }
 
     public void joinGroup(Integer gid, String account) {
-        guModel.join(gid, userRepository.getUidByAccount(account), DateUtils.getNowDateString());
+        guRepository.save(new GroupUsers(gid, userRepository.getUidByAccount(account), DateUtils.getNowDateString()));
     }
 
-    public List<Group> getGroupsByUserName(String account) {
-        return groupModel.getGroupsByUserId(userRepository.getUidByAccount(account));
+    public List<GroupInfo> getGroupsByUserName(String account) {
+        return groupRepository.groupInfosByAccount(account);
     }
 
-    public List<Group> searchGroups(String name) {
-        return groupModel.searchGroupsByName(name);
+    public List<GroupInfo> searchGroups(String name) {
+        return groupRepository.getGroupInfosByNameLike(name);
     }
 
-    public List<User> getUsersInGroup(Integer gid) {
-        return guModel.getUsers(gid).stream().map(i->userRepository.limitUserInfoById(i)).collect(Collectors.toList());
+    public List<Integer> getUsersInGroup(Integer gid) {
+        return guRepository.usersInGroup(gid);
     }
 
 }

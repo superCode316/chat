@@ -8,7 +8,7 @@
 <body>
 Welcome<br/>
 <input id="text" type="text" /><button onclick="send()">Send</button>    <button onclick="closeWebSocket()">Close</button>
-<div id="message">
+<div id="messages">
 </div>
 </body>
 
@@ -45,7 +45,7 @@ Welcome<br/>
 
     //将消息显示在网页上
     function setMessageInnerHTML(innerHTML){
-        document.getElementById('message').innerHTML += innerHTML + '<br/>';
+        document.getElementById('messages').innerHTML += innerHTML + '<br/>';
     }
 
     //关闭连接
@@ -55,8 +55,8 @@ Welcome<br/>
 
     //发送消息
     function send(){
-        var message = document.getElementById('text').value;
-        websocket.send(message);
+        var messages = document.getElementById('text').value;
+        websocket.send(messages);
     }
 </script>
 </html>

@@ -1,11 +1,9 @@
 package hdu.homework.chat.utils;
 
-import hdu.homework.chat.annotations.FriendCheck;
 import hdu.homework.chat.annotations.GroupCheck;
-import hdu.homework.chat.entity.bean.database.Group;
+import hdu.homework.chat.entity.bean.database.GroupInfo;
 import hdu.homework.chat.modules.groups.service.GroupService;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -42,16 +40,16 @@ public class GroupCheckInterceptor implements HandlerInterceptor {
             int gid = Integer.parseInt(_gid);
             if (groupCheck.checkIn()) {
                 String username = SecurityContextHolder.getContext().getAuthentication().getName();
-                List<Group> groups = service.getGroupsByUserName(username);
-                if (groups.stream().noneMatch(group -> group.getGId().equals(gid))) {
+                List<GroupInfo> groupInfos = service.getGroupsByUserName(username);
+                if (groupInfos.stream().noneMatch(group -> group.getGId().equals(gid))) {
                     response.sendError(403, "你不在该组里");
                     return false;
                 }
             }
             if (groupCheck.checkNotIn()) {
                 String username = SecurityContextHolder.getContext().getAuthentication().getName();
-                List<Group> groups = service.getGroupsByUserName(username);
-                if (groups.stream().anyMatch(group -> group.getGId().equals(gid))) {
+                List<GroupInfo> groupInfos = service.getGroupsByUserName(username);
+                if (groupInfos.stream().anyMatch(group -> group.getGId().equals(gid))) {
                     response.sendError(403, "你已经在该组里");
                     return false;
                 }

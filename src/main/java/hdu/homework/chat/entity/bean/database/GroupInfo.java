@@ -6,6 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.ToString;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
 /**
  * created by 钱曹宇@supercode on 3/8/2020
  */
@@ -13,8 +18,12 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @ApiModel
-public class Group {
+@Entity
+@Table()
+public class GroupInfo {
+    @Id
     @ApiModelProperty(name = "群组id", dataType = "number")
+    @Column(name = "gId")
     private Integer gId;
     @ApiModelProperty(name = "群组名称", dataType = "string")
     private String name;
@@ -28,9 +37,18 @@ public class Group {
     private String profileUrl;
     @ApiModelProperty(value = "群消息", dataType = "string")
     private String notice;
-    public Group(){}
+    public GroupInfo(){}
 
-    public Group(String name, String description, String profileUrl) {
+    public GroupInfo(Integer gId, String name, String description, Integer adminId, String profileUrl, String notice) {
+        this.gId = gId;
+        this.name = name;
+        this.description = description;
+        this.adminId = adminId;
+        this.profileUrl = profileUrl;
+        this.notice = notice;
+    }
+
+    public GroupInfo(String name, String description, String profileUrl) {
         this.name = name;
         this.description = description;
         this.profileUrl = profileUrl;

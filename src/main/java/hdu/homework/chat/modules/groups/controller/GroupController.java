@@ -1,7 +1,7 @@
 package hdu.homework.chat.modules.groups.controller;
 
 import hdu.homework.chat.annotations.GroupCheck;
-import hdu.homework.chat.entity.bean.database.Group;
+import hdu.homework.chat.entity.bean.database.GroupInfo;
 import hdu.homework.chat.entity.bean.database.User;
 import hdu.homework.chat.entity.bean.response.Msg;
 import hdu.homework.chat.entity.bean.response.swagger.Forbidden;
@@ -9,8 +9,6 @@ import hdu.homework.chat.entity.bean.response.swagger.GroupResponse;
 import hdu.homework.chat.entity.bean.response.swagger.GroupsResponse;
 import hdu.homework.chat.entity.bean.response.swagger.SuccessResponse;
 import hdu.homework.chat.modules.groups.service.GroupService;
-import hdu.homework.chat.modules.user.service.UserDetailsServiceImpl;
-import hdu.homework.chat.utils.ConvertUtils;
 import hdu.homework.chat.utils.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -22,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -48,8 +45,8 @@ public class GroupController {
     })
     public ResponseEntity<Msg<?>> add(String name, String description, String avatarUrl) {
         String account = SecurityContextHolder.getContext().getAuthentication().getName();
-        Group group = new Group(name, description, avatarUrl);
-        service.addGroup(account, group);
+        GroupInfo groupInfo = new GroupInfo(name, description, avatarUrl);
+        service.addGroup(account, groupInfo);
         return ResultUtil.success();
     }
 
@@ -61,7 +58,7 @@ public class GroupController {
     })
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     public ResponseEntity<Msg<?>> info(@RequestParam Integer id) {
-        Optional<Group> group = service.getGroupByGid(id);
+        Optional<GroupInfo> group = service.getGroupByGid(id);
         if (group.isEmpty()) {
             return ResultUtil.error("没有该群的记录");
         }
@@ -93,8 +90,8 @@ public class GroupController {
     })
     public ResponseEntity<Msg<?>> getAllGroups() {
         String account = SecurityContextHolder.getContext().getAuthentication().getName();
-        List<Group> groups = service.getGroupsByUserName(account);
-        return ResultUtil.success(groups);
+        List<GroupInfo> groupInfos = service.getGroupsByUserName(account);
+        return ResultUtil.success(groupInfos);
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -105,8 +102,8 @@ public class GroupController {
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
     public ResponseEntity<Msg<?>> searchGroups(@RequestParam String name) {
-        List<Group> groups = service.searchGroups(name);
-        return ResultUtil.success(groups);
+        List<GroupInfo> groupInfos = service.searchGroups(name);
+        return ResultUtil.success(groupInfos);
     }
 
     @ApiOperation("查询组员")
@@ -118,7 +115,7 @@ public class GroupController {
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
     public ResponseEntity<Msg<?>> getGroupMember(@RequestParam Integer gid) {
-        List<User> result = service.getUsersInGroup(gid);
+        List<Integer> result = service.getUsersInGroup(gid);
         return ResultUtil.success(result);
     }
 

@@ -1,9 +1,9 @@
 package hdu.homework.chat.modules.message.service;
 
-import hdu.homework.chat.entity.bean.database.Message;
+import hdu.homework.chat.entity.bean.database.Messages;
 import hdu.homework.chat.modules.groups.model.GroupUserModel;
-import hdu.homework.chat.modules.message.model.MessageModel;
-import hdu.homework.chat.modules.message.socket.WebSocket;
+import hdu.homework.chat.modules.message.model.MessageRepository;
+import hdu.homework.chat.modules.message.utils.WebSocket;
 import hdu.homework.chat.modules.user.model.UserRepository;
 import hdu.homework.chat.utils.DateUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -16,40 +16,30 @@ import java.util.List;
  */
 @Service
 public class MessageService {
-    private MessageModel messageModel;
     private GroupUserModel guModel;
     private UserRepository userRepository;
+    private MessageRepository messageRepository;
 
-    public MessageService(MessageModel messageModel, GroupUserModel guModel, UserRepository userRepository) {
-        this.messageModel = messageModel;
+    public MessageService(GroupUserModel guModel, UserRepository userRepository, MessageRepository messageRepository) {
         this.guModel = guModel;
         this.userRepository = userRepository;
+        this.messageRepository = messageRepository;
     }
 
-    public void addMessage(Integer userid, Message message) {
-        message.setSenderId(userid);
-        messageModel.insertMessage(message);
+    public void addMessage(Messages messages) {
+        messageRepository.save(messages);
     }
 
-    public List<Message> getMessages(Integer offset, Integer receiver, String account) {
-        return messageModel.getUserByTargetAndId(receiver, offset, userRepository.getUidByAccount(account));
-    }
-
-    public List<Message> getGroupMessages(Integer receiver) {
+    public List<Messages> getGroupMessages(Integer receiver) {
         if (receiver % 10 != 2)
             return null;
-        return messageModel.getGroupMessages(receiver);
-    }
-
-    public void sendMessage(Integer receiver, String content) {
-        String account = SecurityContextHolder.getContext().getAuthentication().getName();
-        sendMessage(userRepository.getUidByAccount(account), receiver, content);
+        return messageRepository.getAllByToId(receiver);
     }
 
     public void sendMessage(Integer sender, Integer receiver, String content) {
-        Message message1 = new Message(content, receiver);
-        message1.setTime(DateUtils.getNowDateString());
-        addMessage(sender, message1);
+        Messages messages1 = new Messages(sender, content, receiver);
+        messages1.setTime(DateUtils.getNowDateString());
+        addMessage(messages1);
 
 //        Set<Object> users = redisUtil.getGroupMember(String.valueOf(receiver));
         List<Integer> users = guModel.getUsers(receiver);

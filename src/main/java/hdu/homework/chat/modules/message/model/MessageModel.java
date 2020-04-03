@@ -1,6 +1,6 @@
 package hdu.homework.chat.modules.message.model;
 
-import hdu.homework.chat.entity.bean.database.Message;
+import hdu.homework.chat.entity.bean.database.Messages;
 import hdu.homework.chat.entity.mapper.MessageMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -11,6 +11,7 @@ import java.util.List;
  * created by 钱曹宇@supercode on 3/8/2020
  */
 @Repository
+@Deprecated
 public class MessageModel {
     private JdbcTemplate template;
     private final String insertMessage = "insert into messages(content, time, sender_id, to_id) value (?,?,?,?)";
@@ -22,15 +23,15 @@ public class MessageModel {
     }
     private final String getGroupMessages = "select * from messages where to_id = ?";
 
-    public void insertMessage(Message message) {
-        template.update(insertMessage, message.getContent(), message.getTime(), message.getSenderId(), message.getToId());
+    public void insertMessage(Messages messages) {
+        template.update(insertMessage, messages.getContent(), messages.getTime(), messages.getSenderId(), messages.getToId());
     }
 
-    public List<Message> getUserByTargetAndId(Integer target, Integer offset, Integer sender) {
+    public List<Messages> getUserByTargetAndId(Integer target, Integer offset, Integer sender) {
         return template.query(getMessageByTarget, new MessageMapper(), offset, target, sender, sender, target);
     }
 
-    public List<Message> getGroupMessages(Integer target) {
+    public List<Messages> getGroupMessages(Integer target) {
         return template.query(getGroupMessages, new MessageMapper(), target);
     }
 }

@@ -45,7 +45,7 @@
                             <button id="registerBtn" class="ui fluid large teal basic submit button">注册</button>
                         </div>
 
-                        <div class="ui error message"></div>
+                        <div class="ui error messages"></div>
 
                     </form>
                 </div>
@@ -81,7 +81,7 @@
             if (res.code === 0) {
                 window.location.href = '/public/login.html'
             } else {
-                alert(res.message)
+                alert(res.messages)
             }
         }
     </script>

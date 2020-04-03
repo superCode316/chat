@@ -1,11 +1,10 @@
 package hdu.homework.chat;
 
-import hdu.homework.chat.modules.message.socket.WebSocket;
+import hdu.homework.chat.modules.message.utils.WebSocket;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.Profile;
 
 /**
  * created by 钱曹宇@supercode on 3/8/2020

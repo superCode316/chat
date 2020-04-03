@@ -1,6 +1,6 @@
 package hdu.homework.chat.modules.groups.model;
 
-import hdu.homework.chat.entity.bean.database.Group;
+import hdu.homework.chat.entity.bean.database.GroupInfo;
 import hdu.homework.chat.entity.mapper.GroupMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * created by 钱曹宇@supercode on 3/8/2020
  */
+@Deprecated
 @Repository
 public class GroupModel {
     private final String getGroup = "select * from group_info where g_id = ?";
@@ -23,23 +24,23 @@ public class GroupModel {
         this.template = template;
     }
 
-    public Group getGroupById(Integer id) {
+    public GroupInfo getGroupById(Integer id) {
         return template.queryForObject(getGroup, new GroupMapper(), id);
     }
 
-    public Group getGroupByName(String name) {
+    public GroupInfo getGroupByName(String name) {
         return template.queryForObject(getGroupByName, new GroupMapper(), name);
     }
 
-    public List<Group> getGroupsByUserId(Integer userid) {
+    public List<GroupInfo> getGroupsByUserId(Integer userid) {
         return template.query(getGroupByUserID, new GroupMapper(), userid);
     }
 
-    public void addGroup(Group group) {
-        template.update(addGroup, group.getName(), group.getCreateTime(), group.getDescription(), group.getAdminId(), group.getProfileUrl());
+    public void addGroup(GroupInfo groupInfo) {
+        template.update(addGroup, groupInfo.getName(), groupInfo.getCreateTime(), groupInfo.getDescription(), groupInfo.getAdminId(), groupInfo.getProfileUrl());
     }
 
-    public List<Group> searchGroupsByName(String name) {
+    public List<GroupInfo> searchGroupsByName(String name) {
         return template.query(getGetGroupByName, new GroupMapper(), name+"%", "%"+name, "%"+name+"%");
     }
 }

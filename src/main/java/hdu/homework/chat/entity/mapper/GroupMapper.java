@@ -1,10 +1,10 @@
 package hdu.homework.chat.entity.mapper;
 
-import hdu.homework.chat.entity.bean.database.Group;
+import hdu.homework.chat.entity.bean.database.GroupInfo;
 
-public class GroupMapper extends AbstractMapper<Group> {
+public class GroupMapper extends AbstractMapper<GroupInfo> {
     @Override
-    public Class<Group> getClazz() {
-        return Group.class;
+    public Class<GroupInfo> getClazz() {
+        return GroupInfo.class;
     }
 }

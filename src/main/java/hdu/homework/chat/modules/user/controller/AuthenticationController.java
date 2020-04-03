@@ -1,11 +1,12 @@
 package hdu.homework.chat.modules.user.controller;
 
-import hdu.homework.chat.entity.bean.database.Group;
+import hdu.homework.chat.entity.bean.database.GroupInfo;
 import hdu.homework.chat.entity.bean.database.User;
 import hdu.homework.chat.entity.bean.request.UserPost;
 import hdu.homework.chat.entity.bean.response.Msg;
 import hdu.homework.chat.entity.bean.response.swagger.Forbidden;
 import hdu.homework.chat.entity.bean.response.swagger.SuccessResponse;
+import hdu.homework.chat.modules.message.utils.WebSocket;
 import hdu.homework.chat.modules.user.service.AuthenticationService;
 import hdu.homework.chat.modules.groups.service.GroupService;
 import hdu.homework.chat.modules.user.service.UserService;
@@ -61,17 +62,17 @@ public class AuthenticationController {
         } else {
 
             User userInfo = userService.getLimitUserInfo(user.getUsername());
-            List<Group> groupList = groupService.getGroupsByUserName(user.getUsername());
+            List<GroupInfo> groupInfoList = groupService.getGroupsByUserName(user.getUsername());
             Cookie cookie = new Cookie("x-access-token", loginSuccess);
             cookie.setMaxAge(60*60);
             cookie.setPath("/");
             response.addCookie(cookie);
 
             String ticket = StringUtils.randomString(user.getUsername(), user.getPassword());
-            redisUtil.set(ticket, userInfo.getUId());
-
+//            redisUtil.set(ticket, userInfo.getUId());
+            WebSocket.setUserTicket(ticket, String.valueOf(userInfo.getUId()));
             return ResultUtil.success(
-                    Map.of("groups", groupList,
+                    Map.of("groups", groupInfoList,
                             "userid", userInfo.getUId(),
                             "ticket", ticket)
             );
