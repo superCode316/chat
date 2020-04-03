@@ -82,8 +82,8 @@
                 <img src="../static/images/unsplash.jpg">
             </div>
             <div class="content">
-                <a class="header">Kristy</a>
-                <div class="description">
+                <a class="header" id="card-name">Kristy</a>
+                <div class="description" id="card-desc">
                     Kristy is an art director living in New York.
                 </div>
             </div>
@@ -101,7 +101,7 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
     const userid = Number.parseInt(localStorage.getItem('userid'));
     const def_your_message = '<div class="box_bd scroll-content">\n' +
         '                        <div class="message-you you">\n' +
-        '                            <img onclick="show()" class="avatar-chat-you" src="../static/images/unsplash.jpg">\n' +
+        '                            <img onclick="show(UID)" class="avatar-chat-you" src="../static/images/unsplash.jpg">\n' +
         '                            <div class="content">\n' +
         '                                <div class="bubble bubble_default right">\n' +
         '                                    <div class="bubble_cont">\n' +
@@ -168,14 +168,14 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
         if ((userinfo=localStorage.getItem('userinfo_' + senderId)) === null) {
             userinfo = await (getNewUser(senderId));
         }
-        const one = def_your_message.replace('CONTENT', msgBody.content);
+        const one = def_your_message.replace('CONTENT', msgBody.content).replace('UID', senderId);
         addMessage(one)
     }
     async function getNewUser(uid) {
         const res = await $.ajax('/user/info?uid='+uid);
         if (res.code === 0) {
             const userInfo= res.data;
-            localStorage.setItem('userinfo_' + uid, userInfo);
+            localStorage.setItem('userinfo_' + uid, JSON.stringify(userInfo));
             return userInfo;
         }
         return null;
@@ -185,7 +185,9 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
         messageList.innerHTML += msgHtml;
     }
     // setInterval(refreshMessage, 2000);
-    const ticket = window.location.href.split('ticket=')[1];
+    const ticket = window.location.href.split('ticket=')[1] || localStorage.getItem('ticket');
+    if (ticket)
+        localStorage.setItem('ticket', ticket);
     let websocket;
 
     function configSocket() {
@@ -248,6 +250,7 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
     messageList.scrollTop = messageList.scrollHeight;
 </script>
 <script>
+    let card = $('.ui.card')[0];
     $('#closeBtn')
         .on('click', function() {
             $(this)
@@ -255,8 +258,27 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
                 .css("display","none");
         });
 
-    function show() {
-        $('.ui.card').css("display", "block");
+    function show(u) {
+        let userinfo = JSON.parse(localStorage.getItem('userinfo_'+u));
+        if (!userinfo) {
+            $.ajax({
+                url:'/user/info?uid='+u,
+                success: function(e) {
+                    userinfo = e.data;
+                    setCardInfo(userinfo);
+                    $('.ui.card').css("display", "block");
+                    localStorage.setItem('userinfo_' + u, JSON.stringify(userinfo))
+                }
+            })
+        } else {
+            setCardInfo(userinfo);
+            $('.ui.card').css("display", "block");
+        }
+    }
+
+    function setCardInfo(userinfo) {
+        document.getElementById('card-name').innerText = userinfo.name || userinfo.account;
+        document.getElementById('card-desc').innerText = userinfo.sign
     }
 
     $("#text").keyup(function (event) {

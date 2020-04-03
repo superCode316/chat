@@ -35,10 +35,12 @@ public class User {
         this.password = password;
     }
 
-    public User(int uId, String account, String profileUrl) {
+    public User(int uId, String account, String profileUrl, String sign, String name) {
         this.uId = uId;
         this.profileUrl = profileUrl;
         this.account = account;
+        this.sign = sign;
+        this.name = name;
     }
     public static String REFUSE_LOGIN_USERNAME = "nologin";
     public static String REFUSE_LOGIN_PASSWORD = "nologin";

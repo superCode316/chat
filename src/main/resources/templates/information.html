@@ -201,24 +201,41 @@
             sf[33] = ["台湾省","台北|高雄|台中|台南|屏东|南投|云林|新竹|彰化|苗栗|嘉义|花莲|桃园|宜兰|基隆|台东|金门|马祖|澎湖"];
             sf[34] = ["其它","北美洲|南美洲|亚洲|非洲|欧洲|大洋洲"];
         }catch(e){
-            alert(e);
+            console.log(e);
         }
         $(document).ready(function(e) {
-            $("#pro").change(function(){
-                try{
-                    var pro=$(this).val();
-                    var i,j,tmpcity=[];
-                    for(i=0;i<sf.length;i++){
-                        if(pro===sf[i][0].toString()){
-                            tmpcity=sf[i][1].split("|");
-                            $("#city").html("");
-                            for(j=0;j<tmpcity.length;j++){
-                                $("#city").append("<option>"+tmpcity[j]+"</option>");
-                            }
+            function changePro(pro = undefined){
+                var i,j,tmpcity=[];
+                for(i=0;i<sf.length;i++){
+                    if(pro===sf[i][0].toString()){
+                        tmpcity=sf[i][1].split("|");
+                        $("#city").html("");
+                        for(j=0;j<tmpcity.length;j++){
+                            $("#city").append("<option>"+tmpcity[j]+"</option>");
                         }
                     }
+                }
+            }
+            $("#pro").change(function (){
+                try{
+                    var pro=$(this).val();
+                    changePro(pro)
                 }catch(e){
-                    alert(e);
+                    console.log(e);
+                }
+            });
+            $.ajax({
+                url:'/user/profile',
+                success: function(e) {
+                    let info = e.data;
+                    $('#avatar').src = info.profileUrl;
+                    $('#nickname').val(info.name);
+                    $("#sex").val(info.sex||'男');
+                    $("#date").val(info.birth);
+                    $("#pro").val(info.province);
+                    changePro(info.province);
+                    $("#city").val(info.city);
+                    $("#autograph").val(info.sign);
                 }
             });
         });
@@ -255,16 +272,6 @@
             });
         });
 
-        $(document).onload(async function () {
-            let info = (await $.ajax('/user/profile')).data;
-            $('#avatar').src = info.profileUrl;
-            $('#nickname').val(info.name);
-            $("#sex").val(info.sex||'男');
-            $("#date").val(info.birth);
-            $("#pro").val(info.province);
-            $("#city").val(info.city);
-            $("#autograph").val(info.sign);
-        })
     </script>
 
 </body>

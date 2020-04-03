@@ -14,9 +14,9 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends JpaRepository<User, String> {
     User getUserByAccount(String account);
     User findByAccount(String account);
-    @Query("select new hdu.homework.chat.entity.bean.database.User(u.uId, u.account, u.profileUrl) from User u where u.uId = ?1")
+    @Query("select new hdu.homework.chat.entity.bean.database.User(u.uId, u.account, u.profileUrl, u.sign, u.name) from User u where u.uId = ?1")
     User limitUserInfoById(Integer id);
-    @Query("select new hdu.homework.chat.entity.bean.database.User(u.uId, u.account, u.profileUrl) from User u where u.account = ?1")
+    @Query("select new hdu.homework.chat.entity.bean.database.User(u.uId, u.account, u.profileUrl, u.sign, u.name) from User u where u.account = ?1")
     User limitUserInfoByAccount(String account);
     @Query("select u.uId from User u where u.account = ?1")
     Integer getUidByAccount(String account);
