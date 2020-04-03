@@ -24,7 +24,7 @@
                             <div class="eleven wide column">
                                 <div class="inline fields">
                                     <div class="field">
-                                        <img src="../static/images/unsplash.jpg" class="ui rounded image" width="150" height="100">
+                                        <img src="../static/images/unsplash.jpg" class="ui rounded image" width="150" height="100" id="avatar">
                                     </div>
                                     <div class="field">
 <!--                                        <div style="position: absolute; ">-->
@@ -232,7 +232,8 @@
             date: '1988/01/31'
         });
 
-        $("#save").click(function () {
+        $("#save").click(function (e) {
+            e.preventDefault();
             let formData =new FormData();
             formData.append('file', $("#file")[0].files[0]);
             formData.append('name',$("#nickname").val());
@@ -240,8 +241,7 @@
             formData.append('date',$("#date").val());
             formData.append('pro',$("#pro").val());
             formData.append('city',$("#city").val());
-            formData.append('autograph',$("#autograph").val());
-            formData.append('data',head+"&"+name+"&"+sex+"&"+date+"&"+pro+"&"+city+"&"+autograph);
+            formData.append('autoGraph',$("#autograph").val());
             $.ajax({
                 type: "post",
                 url: "/user/update-profile",
@@ -254,6 +254,17 @@
                 }
             });
         });
+
+        $(document).onload(async function () {
+            let info = (await $.ajax('/user/profile')).data;
+            $('#avatar').src = info.profileUrl;
+            $('#nickname').val(info.name);
+            $("#sex").val(info.sex||'男');
+            $("#date").val(info.birth);
+            $("#pro").val(info.province);
+            $("#city").val(info.city);
+            $("#autograph").val(info.sign);
+        })
     </script>
 
 </body>

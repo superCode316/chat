@@ -13,6 +13,7 @@ import java.util.List;
  * created by 钱曹宇@supercode on 3/8/2020
  */
 @Repository
+@Deprecated
 public class UserModel {
     private JdbcTemplate template;
     private final String countQuery = "select count(*) from user where account = ?";

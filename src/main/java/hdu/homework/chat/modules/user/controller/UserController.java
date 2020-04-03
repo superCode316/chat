@@ -36,7 +36,14 @@ public class UserController {
         return ResultUtil.success(userInfo);
     }
 
-    @RequestMapping("/update-profile")
+    @RequestMapping("/profile")
+    public ResponseEntity<Msg<?>> userProfile() {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User userInfo = userService.getFullUserInfo(username);
+        return ResultUtil.success(userInfo);
+    }
+
+    @RequestMapping(value = "/update-profile", method = RequestMethod.POST)
     public ResponseEntity<Msg<?>> updateProfile(@RequestBody(required = false)MultipartFile file,
                                                 String name, String sex,
                                                 String date, String pro,
@@ -58,7 +65,7 @@ public class UserController {
             userInfo.setProvince(fileEncode);
             saveFile();
         }
-
+        userService.saveUserProfile(userInfo);
         return ResultUtil.success();
     }
 

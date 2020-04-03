@@ -4,11 +4,10 @@ import hdu.homework.chat.entity.bean.database.Group;
 import hdu.homework.chat.entity.bean.database.User;
 import hdu.homework.chat.modules.groups.model.GroupModel;
 import hdu.homework.chat.modules.groups.model.GroupUserModel;
-import hdu.homework.chat.modules.user.model.UserModel;
+import hdu.homework.chat.modules.user.model.UserRepository;
 import hdu.homework.chat.utils.DateUtils;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,12 +20,12 @@ public class GroupService {
 
     private GroupModel groupModel;
     private GroupUserModel guModel;
-    private UserModel userModel;
+    private UserRepository userRepository;
 
-    public GroupService(GroupModel groupModel, GroupUserModel guModel, UserModel userModel) {
+    public GroupService(GroupModel groupModel, GroupUserModel guModel, UserRepository userRepository) {
         this.groupModel = groupModel;
         this.guModel = guModel;
-        this.userModel = userModel;
+        this.userRepository = userRepository;
     }
 
     public Optional<Group> getGroupByGid(Integer gid) {
@@ -35,17 +34,17 @@ public class GroupService {
     }
 
     public void addGroup(String account, Group g) {
-        g.setAdminId(userModel.getUidByAccount(account));
+        g.setAdminId(userRepository.getUidByAccount(account));
         g.setCreateTime(DateUtils.getNowDateString());
         groupModel.addGroup(g);
     }
 
     public void joinGroup(Integer gid, String account) {
-        guModel.join(gid, userModel.getUidByAccount(account), DateUtils.getNowDateString());
+        guModel.join(gid, userRepository.getUidByAccount(account), DateUtils.getNowDateString());
     }
 
     public List<Group> getGroupsByUserName(String account) {
-        return groupModel.getGroupsByUserId(userModel.getUidByAccount(account));
+        return groupModel.getGroupsByUserId(userRepository.getUidByAccount(account));
     }
 
     public List<Group> searchGroups(String name) {
@@ -53,7 +52,7 @@ public class GroupService {
     }
 
     public List<User> getUsersInGroup(Integer gid) {
-        return guModel.getUsers(gid).stream().map(i->userModel.getLimitUserInfo(i)).collect(Collectors.toList());
+        return guModel.getUsers(gid).stream().map(i->userRepository.limitUserInfoById(i)).collect(Collectors.toList());
     }
 
 }

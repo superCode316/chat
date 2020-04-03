@@ -3,7 +3,7 @@ package hdu.homework.chat.modules.user.service;
 import hdu.homework.chat.entity.bean.security.JWToken;
 import hdu.homework.chat.entity.bean.database.User;
 import hdu.homework.chat.entity.bean.request.UserPost;
-import hdu.homework.chat.modules.user.model.UserModel;
+import hdu.homework.chat.modules.user.model.UserRepository;
 import hdu.homework.chat.utils.JSONTokenUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -22,15 +22,15 @@ import java.util.Optional;
 @Service
 public class AuthenticationService{
 
-    private final UserModel User;
+    private final UserRepository userRepository;
     private final UserDetailsService userDetailsService;
     private final JSONTokenUtil jsonTokenUtil;
     private final RedisTemplate<String, Object> redis;
 
     private List<Character> symbols = List.of('.',',','!','@','#','$','%','+','-','*','/');
 
-    public AuthenticationService(UserModel User, @Qualifier("userdetails") UserDetailsService userDetailsService, JSONTokenUtil jsonTokenUtil, RedisTemplate<String, Object> redis) {
-        this.User = User;
+    public AuthenticationService(UserRepository userRepository, @Qualifier("userdetails") UserDetailsService userDetailsService, JSONTokenUtil jsonTokenUtil, RedisTemplate<String, Object> redis) {
+        this.userRepository = userRepository;
         this.userDetailsService = userDetailsService;
         this.jsonTokenUtil = jsonTokenUtil;
         this.redis = redis;
@@ -51,7 +51,7 @@ public class AuthenticationService{
     public String login(String account, String password) {
         User user;
         try {
-            user = User.getAuthenticationInfo(account);
+            user = userRepository.authInfo(account);
             if (!validate(user, password)) return null;
         } catch (EmptyResultDataAccessException | NullPointerException e) {
             return null;
@@ -87,11 +87,11 @@ public class AuthenticationService{
     }
 
     public void addUser(UserPost user) {
-        User.addUser(user.getUsername(), user.getPassword());
+        userRepository.save(new User(user.getUsername(), user.getPassword()));
     }
 
     private boolean checkUserExist(String username) {
-        return User.getUserCount(username) == 1;
+        return userRepository.getUserByAccount(username) != null;
     }
 
     private boolean checkPasswordComplexity(String password) {

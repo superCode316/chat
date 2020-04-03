@@ -2,6 +2,8 @@ package hdu.homework.chat.entity.bean.database;
 
 import hdu.homework.chat.modules.user.controller.UserController;
 import lombok.Data;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -11,6 +13,8 @@ import javax.persistence.Id;
  */
 @Data
 @Entity
+@DynamicInsert
+@DynamicUpdate
 public class User {
     @Id
     private int uId;
@@ -31,6 +35,11 @@ public class User {
         this.password = password;
     }
 
+    public User(int uId, String account, String profileUrl) {
+        this.uId = uId;
+        this.profileUrl = profileUrl;
+        this.account = account;
+    }
     public static String REFUSE_LOGIN_USERNAME = "nologin";
     public static String REFUSE_LOGIN_PASSWORD = "nologin";
     public static User DEFAULT = new User(REFUSE_LOGIN_USERNAME, REFUSE_LOGIN_PASSWORD);

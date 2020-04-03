@@ -1,8 +1,7 @@
 package hdu.homework.chat.modules.user.service;
 
 import hdu.homework.chat.entity.bean.database.User;
-import hdu.homework.chat.modules.groups.model.GroupModel;
-import hdu.homework.chat.modules.user.model.UserModel;
+import hdu.homework.chat.modules.user.model.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -14,15 +13,15 @@ import org.springframework.stereotype.Service;
 @Service("userdetails")
 public class UserDetailsServiceImpl implements UserDetailsService {
 
-    private final UserModel userModel;
+    private final UserRepository userRepository;
 
-    public UserDetailsServiceImpl(UserModel userModel) {
-        this.userModel = userModel;
+    public UserDetailsServiceImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        User user = userModel.getLimitUserInfo(s);
+        User user = userRepository.limitUserInfoByAccount(s);
         return new UserDetailsImpl(user);
     }
 

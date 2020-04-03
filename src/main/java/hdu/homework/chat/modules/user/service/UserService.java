@@ -1,8 +1,7 @@
 package hdu.homework.chat.modules.user.service;
 
 import hdu.homework.chat.entity.bean.database.User;
-import hdu.homework.chat.modules.user.model.UserModel;
-import hdu.homework.chat.modules.user.repo.UserRepository;
+import hdu.homework.chat.modules.user.model.UserRepository;
 import org.springframework.stereotype.Service;
 
 /**
@@ -10,24 +9,22 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class UserService {
-    private UserModel userModel;
     private UserRepository userRepository;
 
-    public UserService(UserModel userModel, UserRepository userRepository) {
-        this.userModel = userModel;
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     public User getLimitUserInfo(String account) {
-        return userModel.getLimitUserInfo(account);
+        return userRepository.limitUserInfoByAccount(account);
     }
 
     public User getLimitUserInfo(Integer uid) {
-        return userModel.getLimitUserInfo(uid);
+        return userRepository.limitUserInfoById(uid);
     }
 
     public User getFullUserInfo(String account) {
-        return userModel.getFullUserInfo(account);
+        return userRepository.findByAccount(account);
     }
 
     public void saveUserProfile(User user) {

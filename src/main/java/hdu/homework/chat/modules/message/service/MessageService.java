@@ -2,10 +2,9 @@ package hdu.homework.chat.modules.message.service;
 
 import hdu.homework.chat.entity.bean.database.Message;
 import hdu.homework.chat.modules.groups.model.GroupUserModel;
-import hdu.homework.chat.modules.groups.service.GroupService;
 import hdu.homework.chat.modules.message.model.MessageModel;
 import hdu.homework.chat.modules.message.socket.WebSocket;
-import hdu.homework.chat.modules.user.model.UserModel;
+import hdu.homework.chat.modules.user.model.UserRepository;
 import hdu.homework.chat.utils.DateUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -18,13 +17,13 @@ import java.util.List;
 @Service
 public class MessageService {
     private MessageModel messageModel;
-    private UserModel userModel;
     private GroupUserModel guModel;
+    private UserRepository userRepository;
 
-    public MessageService(MessageModel messageModel, UserModel userModel, GroupUserModel guModel) {
+    public MessageService(MessageModel messageModel, GroupUserModel guModel, UserRepository userRepository) {
         this.messageModel = messageModel;
-        this.userModel = userModel;
         this.guModel = guModel;
+        this.userRepository = userRepository;
     }
 
     public void addMessage(Integer userid, Message message) {
@@ -33,7 +32,7 @@ public class MessageService {
     }
 
     public List<Message> getMessages(Integer offset, Integer receiver, String account) {
-        return messageModel.getUserByTargetAndId(receiver, offset, userModel.getUidByAccount(account));
+        return messageModel.getUserByTargetAndId(receiver, offset, userRepository.getUidByAccount(account));
     }
 
     public List<Message> getGroupMessages(Integer receiver) {
@@ -44,7 +43,7 @@ public class MessageService {
 
     public void sendMessage(Integer receiver, String content) {
         String account = SecurityContextHolder.getContext().getAuthentication().getName();
-        sendMessage(userModel.getUidByAccount(account), receiver, content);
+        sendMessage(userRepository.getUidByAccount(account), receiver, content);
     }
 
     public void sendMessage(Integer sender, Integer receiver, String content) {
