@@ -296,6 +296,19 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
         }
     })
 
+    var ul = document.getElementById("user_list");
+    var li = ul.getElementsByClassName("item");
+    for (var i = 0, len = li.length; i < len; i++) {
+        var btn = li[i];
+        btn.index = i;
+        btn.onclick = function () {
+            for(var j = 0; j < li.length; j++){
+                li[j].className = 'item';
+            }
+            this.className = 'item current';
+            $("#msg-content").html(messageList);
+        }
+    }
 </script>
 </body>
 
