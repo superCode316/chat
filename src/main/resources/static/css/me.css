@@ -316,7 +316,7 @@ body {
     padding: 0;
     position: relative!important;
     top: 0;
-    width: auto!important;
+    width: 650px!important;
 }
 
 .chat_item {
@@ -392,6 +392,7 @@ body {
 .box_bd {
     bottom: 180px;
     padding: 0 19px;
+    padding-right: 50px!important;
     overflow-y: auto;
     overflow-x: hidden;
 }
@@ -442,13 +443,12 @@ pre {
     height: 30.4px !important;
 }
 
-.message-me {
+.message-you {
     float: right !important;
     text-align: right !important;
     clear: right !important;
     width: 100%;
     margin-bottom: 16px;
-    margin-left: 100px;
 }
 
 .message-me {
