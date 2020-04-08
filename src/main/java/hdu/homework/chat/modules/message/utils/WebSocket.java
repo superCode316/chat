@@ -30,11 +30,11 @@ public class WebSocket {
         WebSocket.applicationContext = applicationContext;
     }
 
-    public static void send(String username, String msg, Integer sender) {
+    public static void send(String username, String msg, Integer sender, Integer receiver) {
         if (!webSocketSet.containsKey(username))
             return;
         try {
-            webSocketSet.get(username).sendMessage("{\"content\":\""+msg+"\",\"senderId\":\""+sender+"\"}");
+            webSocketSet.get(username).sendMessage("{\"content\":\""+msg+"\",\"senderId\":\""+sender+"\",\"toId\":\""+receiver+"\"}");
         } catch (IOException e) {
             log.error(e.getLocalizedMessage());
             e.printStackTrace();

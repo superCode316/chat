@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @ApiModel()
-public class Msg<T> {
+public class Msg<T> extends BaseMsg {
     private int code;
     private String message;
     @ApiModelProperty(name = "返回数据")

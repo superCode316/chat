@@ -41,7 +41,7 @@ public class Consumer implements CommandLineRunner {
         consumer.subscribe(config.getTopic(), "*");
 
         consumer.registerMessageListener((MessageListenerConcurrently) (msgs, context) -> {
-            System.out.println(Thread.currentThread().getName() + " Receive New Messages: " + msgs);
+            log.info(Thread.currentThread().getName() + " Receive New Messages: " + msgs);
             for (Message m : msgs) {
                 Messages messages = gson.fromJson(new String(m.getBody()), Messages.class);
                 service.sendMessage(messages.getSenderId(), messages.getToId(), messages.getContent());

@@ -29,3 +29,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+server.keystore
+src/main/resources/application-dev.properties

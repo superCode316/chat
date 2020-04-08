@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>聊天界面</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <link rel="stylesheet" href="/static/css/semantic.min.css">
     <link rel="stylesheet" href="../static/css/me.css" th:href="@{/css/me.css}">
     <meta name="viewport" content="width=1024">
 </head>
@@ -16,7 +16,7 @@
                 <img class="ui img rounded image" src="../static/images/unsplash.jpg" style="width: 50px; height: 50px">
             </div>
             <div class="info">
-                <h3 class="nickname m-nickname-position">
+                <h3 class="nickname m-nickname-position" id="user-name">
                     用户名
                 </h3>
                 <!--                    <label class="m-text-size" style="position: relative; top: 0;bottom: 0;left: 10px;right: 0">个性签名</label>-->
@@ -40,7 +40,7 @@
         <div class="box_hd">
             <div class="title_wrap">
                 <div class="title poi" id="header">
-                    <a class="title_name title poi">用户名</a>
+                    <a class="title_name title poi" id="group-name"></a>
                     <i class="web_wechat_down_icon"></i>
                 </div>
             </div>
@@ -48,21 +48,6 @@
         <!--聊天框-->
         <div class="box_bd scroll-wrapper" style="position: absolute">
             <div class="box_bd scroll-content" style="margin-bottom: 0;margin-right: 0;height: 494px;overflow-y: auto !important;" id="msg-content">
-                <!--                    -->
-                <div class="box_bd scroll-content" style="">
-                    <div  class="message-you you">
-                        <img onclick="show()" class="avatar-chat-you" src="../static/images/unsplash.jpg">
-                        <div class="content">
-                            <div class="bubble bubble_default right">
-                                <div class="bubble_cont">
-                                    <div class="plain">
-                                        <pre>这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息这是一条消息</pre>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
         <!--聊天框底部输入框和发送按钮-->
@@ -97,10 +82,22 @@
 <script src="http
 s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
 <script>
+    let nowGroup;
     let count = 0;
+    let saved_messages = {};
+    let preGroup;
+    let websocket;
     const userid = Number.parseInt(localStorage.getItem('userid'));
-    const def_your_message = '<div class="box_bd scroll-content">\n' +
-        '                        <div class="messages-you you">\n' +
+    let user_info;
+    const saved_group = JSON.parse(localStorage.getItem('groups_info'));
+    const messageList = document.getElementById('msg-content');
+    const groupName = document.getElementById('group-name');
+    const connectError = '<h4 id="socketReconnect">服务器连接丢失<a onclick="configSocket()">&nbsp重新连接</a></h4>\n';
+    const ticket = window.location.href.split('ticket=')[1] || localStorage.getItem('ticket');
+    if (ticket) localStorage.setItem('ticket', ticket);
+    (async function(){user_info = await getUser(userid);document.getElementById('user-name').innerText = JSON.parse(user_info).name;})();
+    const def_your_message = '<div class="box_bd scroll-content" style="margin-bottom: 0;margin-right: 0;height: 494px;overflow-y: auto !important;" >\n' +
+        '                        <div class="message-you you">\n' +
         '                            <img onclick="show(UID)" class="avatar-chat-you" src="../static/images/unsplash.jpg">\n' +
         '                            <div class="content">\n' +
         '                                <div class="bubble bubble_default right">\n' +
@@ -128,53 +125,72 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
         '                        </div>\n' +
         '                    </div>' ;
     const def_group_tab = '\n' +
-        '                    <div class="item" style="background: #2e3238;margin-bottom: 0.5em">\n' +
+        '                    <div class="item" style="background: #2e3238;margin-bottom: 0.5em" onclick="changeGroup(this, GNO)">\n' +
         '                        <img class="ui rounded image" style="margin-left: 1em; width: 40px; height: 40px" onerror="this.src=\'/static/images/avatar.png\';" src="AVATAR_URL" alt="头像">\n' +
         '                        <div class="content" >\n' +
         '                            <div class="header" style="color: white">NAME</div>\n' +
         '                        </div>\n' +
         '                    </div>';
-    const connectError = '<h4 id="socketReconnect">服务器连接丢失<a onclick="configSocket()">&nbsp重新连接</a></h4>\n';
-    const saved_group = JSON.parse(localStorage.getItem('groups_info'));
-    const messageList = document.getElementById('msg-content');
-    $("#submit").click(function () {
+    for (let i of saved_group) {
+        const newTab = def_group_tab.replace('AVATAR_URL', i.profileUrl).replace('NAME', i.name).replace('GNO', i.gid);
+        document.getElementById('user_list').innerHTML+=newTab;
+        saved_messages[i.gid] = [];
+        $.ajax({
+            url: '/message/get-group?receiver='+i.gid,
+            success: function (e) {
+                saved_messages[i.gid].push(e.data)
+            }
+        })
+    }
+    function send() {
         const textArea = $("#text");
         let data = textArea.val();
         textArea.val('');
-        // websocket.send(JSON.stringify({groupId:12,content:data}))
         $.ajax({
             url:'/message/send',
-            data: {receiver:12,content:data,senderId: userid},
+            data: {receiver:nowGroup,content:data,senderId: userid},
             method: "POST"
         })
-    });
-    for (let i of saved_group) {
-        const newTab = def_group_tab.replace('AVATAR_URL', i.profileUrl).replace('NAME', i.name);
-        console.log(newTab);
-        document.getElementById('user_list').innerHTML+=newTab;
     }
-    (async function(){
-        const messages = await $.ajax('/message/get-group?receiver=12');
-        for (let i of messages.data){
-            await handleMessage(i)
+    async function changeGroup(e, gid) {
+        if (preGroup) preGroup.class = 'item';
+        nowGroup = gid;
+        preGroup = e;
+        messageList.innerHTML = '';
+        e.class = 'item current';
+        const tmp_messages = [];
+        for (let message of saved_messages[gid][0]) tmp_messages.push(message);
+        for (let message of tmp_messages) {
+            console.log(message);
+            await handleMessage(message, false)
         }
-    })();
+        for (let group of saved_group) {
+            if (group.gid === gid) {
+                groupName.innerText = group.name;
+                break;
+            }
+        }
+    }
     function addMyMessage(msg) {
         const one = def_my_message.replace('CONTENT', msg.content || msg);
         addMessage(one);
     }
-    async function handleMessage(msgBody) {
+    async function handleMessage(msgBody, save=true) {
         console.log(msgBody);
+        if (save) saved_messages[msgBody.toId][0].push(msgBody);
         if (msgBody.senderId === undefined || msgBody.senderId === userid || msgBody.senderId === String(userid)) {
             return addMyMessage(msgBody);
         }
         let { senderId } = msgBody;
-        let userinfo;
-        if ((userinfo=localStorage.getItem('userinfo_' + senderId)) === null) {
-            userinfo = await (getNewUser(senderId));
-        }
         const one = def_your_message.replace('CONTENT', msgBody.content).replace('UID', senderId);
         addMessage(one)
+    }
+    async function getUser(uid) {
+        let userinfo;
+        if ((userinfo=localStorage.getItem('userinfo_' + uid)) === null) {
+            userinfo = await (getNewUser(uid));
+        }
+        return userinfo;
     }
     async function getNewUser(uid) {
         const res = await $.ajax('/user/info?uid='+uid);
@@ -189,18 +205,11 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
         count++;
         messageList.innerHTML += msgHtml;
     }
-    // setInterval(refreshMessage, 2000);
-    const ticket = window.location.href.split('ticket=')[1] || localStorage.getItem('ticket');
-    if (ticket)
-        localStorage.setItem('ticket', ticket);
-    let websocket;
-
     function configSocket() {
         const rec = document.getElementById('socketReconnect');
 
         if (rec !== null)
             document.getElementById('header').removeChild(rec);
-
         websocket = new WebSocket("ws://"+window.location.host+"/websocket/"+ticket);
 
         //连接发生错误的回调方法
@@ -251,19 +260,11 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
         console.log('showSocketError');
         document.getElementById('header').innerHTML += connectError;
     }
-    configSocket();
-    messageList.scrollTop = messageList.scrollHeight;
-</script>
-<script>
-    let card = $('.ui.card')[0];
-    $('#closeBtn')
-        .on('click', function() {
-            $(this)
-                .closest('.ui.card')
-                .css("display","none");
-        });
-
     function show(u) {
+        function setCardInfo(userinfo) {
+            document.getElementById('card-name').innerText = userinfo.name || userinfo.account;
+            document.getElementById('card-desc').innerText = userinfo.sign
+        }
         let userinfo = JSON.parse(localStorage.getItem('userinfo_'+u));
         if (!userinfo) {
             $.ajax({
@@ -280,40 +281,20 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
             $('.ui.card').css("display", "block");
         }
     }
-
-    function setCardInfo(userinfo) {
-        document.getElementById('card-name').innerText = userinfo.name || userinfo.account;
-        document.getElementById('card-desc').innerText = userinfo.sign
-    }
-
+    configSocket();
+    $('#closeBtn').on('click', function() {
+            $(this)
+                .closest('.ui.card')
+                .css("display","none");
+    });
     $("#text").keyup(function (event) {
         if (event.which === 13) {
-            const textArea = $("#text");
-            let data = textArea.val();
-            addMyMessage(data);
-            textArea.val('');
-            $.ajax({
-                type: "post",
-                url: "/messages/send",
-                data: {receiver: 12,content:data},
-                withCredentials: true
-            });
+            send()
         }
-    })
+    });
+    $("#submit").click(send);
 
-    var ul = document.getElementById("user_list");
-    var li = ul.getElementsByClassName("item");
-    for (var i = 0, len = li.length; i < len; i++) {
-        var btn = li[i];
-        btn.index = i;
-        btn.onclick = function () {
-            for(var j = 0; j < li.length; j++){
-                li[j].className = 'item';
-            }
-            this.className = 'item current';
-            $("#msg-content").html(messageList);
-        }
-    }
+
 </script>
 </body>
 

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>登陆</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
+    <link rel="stylesheet" href="/static/css/semantic.min.css">
     <link rel="stylesheet" href="../static/css/me.css" th:href="@{/css/me.css}">
 </head>
 <body>
@@ -63,12 +63,10 @@
         $.ajax({
             type: "post",
             url: "/auth/login",
-            contentType: 'application/json',
-            data: JSON.stringify(data),
-            dataType: "json",
+            data: data,
             error: function(e) {
                 console.log(e);
-                alert(e.responseJSON.msg)
+                alert(e.data.msg)
             },
             success: function (e) {
                 localStorage.setItem('groups_info', JSON.stringify(e.data.groups));

@@ -2,7 +2,6 @@ package hdu.homework.chat.modules.user.controller;
 
 import hdu.homework.chat.entity.bean.database.GroupInfo;
 import hdu.homework.chat.entity.bean.database.User;
-import hdu.homework.chat.entity.bean.request.UserPost;
 import hdu.homework.chat.entity.bean.response.Msg;
 import hdu.homework.chat.entity.bean.response.swagger.Forbidden;
 import hdu.homework.chat.entity.bean.response.swagger.SuccessResponse;
@@ -18,7 +17,6 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -55,20 +53,20 @@ public class AuthenticationController {
             @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
-    public ResponseEntity<Msg<?>> postLogin(@RequestBody UserPost user, HttpServletResponse response) {
-        String loginSuccess = service.login(user.getUsername(), user.getPassword());
+    public ResponseEntity<Msg<?>> postLogin(String username, String password, HttpServletResponse response) {
+        String loginSuccess = service.login(username, password);
         if (loginSuccess==null){
             return ResultUtil.result(HttpStatus.FORBIDDEN, 1001,  "用户名或密码出错");
         } else {
 
-            User userInfo = userService.getLimitUserInfo(user.getUsername());
-            List<GroupInfo> groupInfoList = groupService.getGroupsByUserName(user.getUsername());
+            User userInfo = userService.getLimitUserInfo(username);
+            List<GroupInfo> groupInfoList = groupService.getGroupsByUserName(username);
             Cookie cookie = new Cookie("x-access-token", loginSuccess);
             cookie.setMaxAge(60*60);
             cookie.setPath("/");
             response.addCookie(cookie);
 
-            String ticket = StringUtils.randomString(user.getUsername(), user.getPassword());
+            String ticket = StringUtils.randomString(username, password);
 //            redisUtil.set(ticket, userInfo.getUId());
             WebSocket.setUserTicket(ticket, String.valueOf(userInfo.getUId()));
             return ResultUtil.success(
@@ -86,9 +84,9 @@ public class AuthenticationController {
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
     @RequestMapping(value = "/register", method = RequestMethod.POST)
-    public ResponseEntity<Msg<?>> postRegister(@RequestBody UserPost user) {
+    public ResponseEntity<Msg<?>> postRegister(String username, String password) {
 
-        Optional<String> result = service.register(user);
+        Optional<String> result = service.register(username, password);
         return result
                 .map(s -> ResultUtil.error(HttpStatus.BAD_REQUEST, s))
                 .orElseGet(ResultUtil::success);

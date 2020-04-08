@@ -2,7 +2,6 @@ package hdu.homework.chat.modules.user.service;
 
 import hdu.homework.chat.entity.bean.security.JWToken;
 import hdu.homework.chat.entity.bean.database.User;
-import hdu.homework.chat.entity.bean.request.UserPost;
 import hdu.homework.chat.modules.user.model.UserRepository;
 import hdu.homework.chat.utils.JSONTokenUtil;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -73,21 +72,17 @@ public class AuthenticationService{
         return user != null && user.getPassword().equals(password);
     }
 
-    public Optional<String> register(UserPost user) {
-        if (checkUserExist(user.getUsername()))
+    public Optional<String> register(String username, String password) {
+        if (checkUserExist(username))
             return Optional.of("已经有这个用户名了");
-        if (!checkPasswordComplexity(user.getPassword())) {
+        if (!checkPasswordComplexity(password)) {
             return Optional.of("用户名或密码太简单");
         }
-        if (user.getUsername().length() != 11) {
+        if (username.length() != 11) {
             return Optional.of("用户名必须为电话号码");
         }
-        addUser(user);
+        userRepository.save(new User(username, password));
         return Optional.empty();
-    }
-
-    public void addUser(UserPost user) {
-        userRepository.save(new User(user.getUsername(), user.getPassword()));
     }
 
     private boolean checkUserExist(String username) {
