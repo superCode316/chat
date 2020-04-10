@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>聊天界面</title>
-    <link rel="stylesheet" href="/static/css/semantic.min.css">
+    <link rel="stylesheet" href="../static/css/semantic.min.css">
     <link rel="stylesheet" href="../static/css/me.css" th:href="@{/css/me.css}">
     <meta name="viewport" content="width=1024">
 </head>
@@ -16,8 +16,11 @@
                 <img class="ui img rounded image" src="../static/images/unsplash.jpg" style="width: 50px; height: 50px">
             </div>
             <div class="info">
-                <h3 class="nickname m-nickname-position" id="user-name">
-                    用户名
+                <h3 class="nickname m-nickname-position">
+                    <span id="user-name">用户名</span>
+                    <a class="option">
+                        <i class="bars icon" style="color: white;cursor: pointer" onclick="showGroup()"></i>
+                    </a>
                 </h3>
                 <!--                    <label class="m-text-size" style="position: relative; top: 0;bottom: 0;left: 10px;right: 0">个性签名</label>-->
             </div>
@@ -81,6 +84,35 @@
                 <button id="closeBtn" class="ui button">
                     关闭
                 </button>
+            </div>
+        </div>
+        <div class="ui special modal transition" style="margin-left: 10px;width:500px!important;display: none !important;">
+            <div class="header">
+                创建群聊
+            </div>
+            <div class="content" style="height: 100px!important;position: relative">
+                <div class="group-avatar">
+                    <img id="groupAvatar" class="ui rounded image" src="../static/images/unsplash.jpg" style="width: 50px;height: 50px;cursor: pointer" onclick="$('#file').click()">
+                    <input type="file" name="avatar" style="visibility: hidden;" id="file">
+                </div>
+                <div style="position: absolute;top: 65px; left: 25px;">
+                    <label for="file" style="cursor: pointer">群头像</label>
+                </div>
+                <div class="group-name" style="display: inline-block">
+                    <label>群名称：</label>
+                    <div class="ui input" >
+                        <input id="nickname" type="text" name="nickname">
+                    </div>
+                </div>
+                <div class="ui hidden divider"></div>
+            </div>
+            <div class="actions">
+                <button class="ui button" onclick="cancleGroup()">
+                    取消
+                </button>
+                <div class="ui right button" onclick="createGroup()">
+                    创建
+                </div>
             </div>
         </div>
     </div>
@@ -302,6 +334,22 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
     $("#submit").click(send);
 
 
+    // 创建群聊
+    function cancleGroup() {
+        $('.special.modal').css("display","none");
+    }
+
+    function showGroup() {
+        $('.special.modal').css("display","block");
+    }
+
+    function createGroup() {
+        var path = $("#groupAvatar").attr('src');
+        var name = $("#nickname").val();
+        var newTab = def_group_tab.replace('AVATAR_URL', path).replace('NAME', name);
+        document.getElementById('user_list').innerHTML+=newTab;
+        cancleGroup()
+    }
 </script>
 </body>
 
