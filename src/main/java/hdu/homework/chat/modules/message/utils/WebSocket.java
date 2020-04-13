@@ -61,7 +61,7 @@ public class WebSocket {
 
     @OnClose
     public void onClose() {
-        if (this.userid != null)
+        if (this.userid != null && !webSocketSet.get(this.userid).session.isOpen())
             webSocketSet.remove(this.userid);
     }
 

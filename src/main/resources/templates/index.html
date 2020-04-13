@@ -138,6 +138,7 @@
     const connectError = '<h4 id="socketReconnect">服务器连接丢失<a onclick="configSocket()">&nbsp重新连接</a></h4>\n';
     const ticket = window.location.href.split('ticket=')[1] || localStorage.getItem('ticket');
     if (ticket) localStorage.setItem('ticket', ticket);
+    websocket = new WebSocket("ws://"+window.location.host+"/websocket/"+ticket);
     (async function(){user_info = await getUser(userid);document.getElementById('user-name').innerText = typeof user_info === 'string' ? JSON.parse(user_info).name : user_info.name;})();
     const def_your_message = '<div class="box_bd scroll-content" >\n' +
         '                        <div class="message-you you">\n' +
@@ -256,7 +257,6 @@
 
         if (rec !== null)
             document.getElementById('header').removeChild(rec);
-        websocket = new WebSocket("ws://"+window.location.host+"/websocket/"+ticket);
 
         //连接发生错误的回调方法
         websocket.onerror = function(){
@@ -281,6 +281,7 @@
                     try {
                         t++;
                         websocket = new WebSocket('ws://'+window.location.host + "/websocket/"+ticket);
+                        configSocket();
                         console.log('重连成功')
                     } catch (e) {
                         console.log(e);
@@ -336,7 +337,6 @@
             messages: []
         }
     }
-    configSocket();
     $('#closeBtn').on('click', function() {
             $(this)
                 .closest('.ui.card')
@@ -349,6 +349,7 @@
     });
     $("#submit").click(send);
 
+    configSocket()
 
     // 创建群聊
     function cancleGroup() {
