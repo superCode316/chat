@@ -267,7 +267,8 @@
                 contentType: false,
                 success: function (e) {
                     alert('修改成功');
-                    console.log(e)
+                    localStorage.removeItem("userinfo_"+e.data);
+                    window.location.href = '/public/index.html'
                 }
             });
         });

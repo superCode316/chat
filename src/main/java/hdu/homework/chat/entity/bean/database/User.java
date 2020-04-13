@@ -6,6 +6,7 @@ import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
 /**
@@ -17,6 +18,7 @@ import javax.persistence.Id;
 @DynamicUpdate
 public class User {
     @Id
+    @GeneratedValue
     private int uId;
     private String account;
     private String password;

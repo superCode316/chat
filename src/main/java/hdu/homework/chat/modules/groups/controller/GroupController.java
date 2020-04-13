@@ -43,11 +43,11 @@ public class GroupController {
             @ApiResponse(code = 403, response = Forbidden.class, message = "请求失败"),
             @ApiResponse(code = 401, response = Forbidden.class, message = "请求失败")
     })
-    public ResponseEntity<Msg<?>> add(String name, String description, String avatarUrl) {
+    public ResponseEntity<Msg<?>> add(String name) {
         String account = SecurityContextHolder.getContext().getAuthentication().getName();
-        GroupInfo groupInfo = new GroupInfo(name, description, avatarUrl);
-        service.addGroup(account, groupInfo);
-        return ResultUtil.success();
+        GroupInfo groupInfo = new GroupInfo(name, "", "");
+        GroupInfo saved = service.addGroup(account, groupInfo);
+        return ResultUtil.success(saved);
     }
 
     @ApiOperation("查看群组信息接口")
