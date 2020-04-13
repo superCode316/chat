@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>聊天界面</title>
-    <link rel="stylesheet" href="../static/css/semantic.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.css">
     <link rel="stylesheet" href="../static/css/me.css" th:href="@{/css/me.css}">
     <meta name="viewport" content="width=1024">
 </head>
@@ -112,6 +112,46 @@
                 </button>
                 <div class="ui right button" onclick="createGroup()">
                     创建
+                </div>
+            </div>
+        </div>
+        <div class="ui people shape search-card" style="width:500px!important;display: none !important;">
+            <div class="sides">
+                <div class="active side">
+                    <div class="ui card">
+                        <div class="image">
+                            <img id="searchAvatar" src="../static/images/unsplash.jpg" style="height: 194px;width: 290px">
+                        </div>
+                        <div class="content">
+                            <div id="searchName" class="header">用户名</div>
+                            <div class="description">
+                                出生日期：
+                                <div id="birthday" class="ui label">
+                                    0000-00-00
+                                </div>
+                            </div>
+                            <div class="description">
+                                城&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;市：
+                                <div id="city" class="ui label">
+                                    城市
+                                </div>
+                            </div>
+                            <div class="description">
+                                个性签名：
+                                <div id="autograph" class="ui label">
+                                    个性签名个性签名
+                                </div>
+                            </div>
+                        </div>
+                        <div class="right floated actions">
+                            <button class="ui basic button" onclick="cancleSearch()">
+                                取消
+                            </button>
+                            <div class="ui basic right button" style="margin-left: 139px" onclick="createSearch()">
+                                添加
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -349,6 +389,35 @@ s://cdn.jsdelivr.net/npm/semantic-ui@2.4.2/dist/semantic.min.js"></script>
         var newTab = def_group_tab.replace('AVATAR_URL', path).replace('NAME', name);
         document.getElementById('user_list').innerHTML+=newTab;
         cancleGroup()
+    }
+
+
+    //搜索
+    $("#search").keyup(function (event) {
+        if (event.which === 13) {
+            var data = $("#search").val();
+            //加载用户名、城市、出生日期、个签等数据
+
+
+
+            $('.ui.shape.people').css("display", "block");
+        }
+    });
+
+    $("#searchBtn").click(function () {
+        $('.ui.shape.people').css("display", "block");
+    })
+
+    function cancleSearch() {
+        $('.ui.shape.people').css("display","none");
+    }
+
+    function createSearch() {
+        var path = $("#searchAvatar").attr('src');
+        var name = $("#searchName").text();
+        var newTab = def_group_tab.replace('AVATAR_URL', path).replace('NAME', name);
+        document.getElementById('user_list').innerHTML+=newTab;
+        cancleSearch();
     }
 </script>
 </body>
