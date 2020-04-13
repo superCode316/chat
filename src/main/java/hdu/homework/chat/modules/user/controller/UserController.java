@@ -66,7 +66,7 @@ public class UserController {
             saveFile();
         }
         userService.saveUserProfile(userInfo);
-        return ResultUtil.success();
+        return ResultUtil.success(userInfo.getUId());
     }
 
     private void saveFile() {}

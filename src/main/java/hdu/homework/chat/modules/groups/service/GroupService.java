@@ -32,10 +32,10 @@ public class GroupService {
         return Optional.ofNullable(groupInfo);
     }
 
-    public void addGroup(String account, GroupInfo g) {
+    public GroupInfo addGroup(String account, GroupInfo g) {
         g.setAdminId(userRepository.getUidByAccount(account));
         g.setCreateTime(DateUtils.getNowDateString());
-        groupRepository.save(g);
+        return groupRepository.save(g);
     }
 
     public void joinGroup(Integer gid, String account) {
