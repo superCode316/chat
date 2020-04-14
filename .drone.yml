@@ -23,7 +23,7 @@ steps:
         PWD: docker_password
       script:
         - docker login --username=qiancaoyu316 --password=QIANcaoyu316 registry-vpc.cn-shanghai.aliyuncs.com
-        - docker pull registry-vpc.cn-shanghai.aliyuncs.com/qcy_docker/chat:${DRONE_BUILD_NUMBER}
+        - docker pull registry.cn-shanghai.aliyuncs.com/qcy_docker/chat:${DRONE_BUILD_NUMBER}
         - docker stop chat
         - docker rm chat
-        - docker run -itd --name chat --network chat -e spring.profile.active=prod registry-vpc.cn-shanghai.aliyuncs.com/qcy_docker/chat:${DRONE_BUILD_NUMBER}
+        - docker run -itd --name chat --network chat -e spring.profile.active=prod registry.cn-shanghai.aliyuncs.com/qcy_docker/chat:${DRONE_BUILD_NUMBER}
